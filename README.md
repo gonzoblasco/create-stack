@@ -9,18 +9,17 @@
 **Fase:** ✅ M2 cerrado (M1 + AI-native)
 
 **Repo:** https://github.com/gonzoblasco/create-stack-next
+**npm:** https://www.npmjs.com/package/create-stack-next
 
 **Última actualización:** 2026-06-28
 
 **M1 + M2 completados:**
 - [x] Scaffolder funcional + template completo
 - [x] Repo público + npm publish (`0.1.0`)
-- [x] `npm run agent` + `.openclaw/` con prompts (feature, refactor, bugfix, tests)
+- [x] `npm run agent` + `.openclaw/` + `.agents/` + `docs/`
 - [x] 18 decisiones cerradas (D001–D018)
 
-**Pendiente:**
-- [ ] Tests del scaffolder mismo
-- [ ] M3 — Familia de scaffolders
+**Próximo:** Tests del scaffolder + M3 (familia)
 
 ---
 
@@ -95,11 +94,11 @@ Razón principal: **ratio de uso**. Un scaffolder bien hecho se usa cada vez que
 - [x] Publicado a npm (`create-stack-next@0.1.0`)
 - [x] Repo público en GitHub
 
-### M2 — AI-native ⏳
-- [ ] Comando `npm run agent`
-- [ ] Templates de prompts por tipo de tarea
-- [ ] Integración profunda con OpenClaw
-- [ ] Ver criterio de cierre en D018
+### M2 — AI-native ✅ CERRADO (2026-06-28)
+- [x] `npm run agent`
+- [x] Templates de prompts (feature, refactor, bugfix, tests)
+- [x] `.openclaw/` + `.agents/` + `docs/`
+- [x] Ver D018 en `context/decisions.md`
 
 ### M3 — Familia de scaffolders
 - [ ] `create-stack-remix`

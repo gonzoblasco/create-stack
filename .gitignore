@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+.vitest-cache/
+
+# Local test artifacts (cuando probamos el scaffolder)
+my-test-app/
+my-app/
+test-app/
+
+# Lockfiles de proyectos generados (los que crea el scaffolder), no del scaffolder mismo.
+# El scaffolder SÍ commitea su package-lock.json para reproducibilidad.
+# Si en el futuro agregás lockfiles de tests locales, ignorarlos acá.
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Misc
+.turbo
+.cache
+.tmp

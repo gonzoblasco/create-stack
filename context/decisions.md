@@ -1,0 +1,245 @@
+# Decisiones — create-stack-next
+
+Log de todas las decisiones tomadas, con fecha y justificación. Si en 6 meses alguien pregunta *"¿por qué X?"*, la respuesta está acá.
+
+---
+
+## D001 — Tipo de producto: scaffolder (opción A3)
+**Fecha:** 2026-06-27
+**Estado:** ✅ Confirmada
+
+**Contexto:** Gonzo quería "una herramienta para el repositorio". Asistente ofreció 3 categorías (repo-as-product / repo-as-code / repo-as-graph) y 3 candidatos concretos (PR reviewer / doc linter / scaffolder).
+
+**Decisión:** scaffolder opinado (A3).
+
+**Justificación:**
+- Ratio de uso: un scaffolder se usa cada vez que arrancás un proyecto (20+ veces/año por dev activo).
+- PR reviewer compite con Copilot, que ya cubre el 70%.
+- Doc linter es dolor real pero nicho chico, difícil de hacer crecer.
+
+---
+
+## D002 — Scope del MVP: app web full-stack
+**Fecha:** 2026-06-27
+**Estado:** ✅ Confirmada
+
+**Decisión:** el scaffolder genera apps web full-stack. No API services, no librerías, no CLIs en MVP.
+
+**Justificación:**
+- Es el caso de uso más común para devs que arrancan proyectos.
+- Más simple mantener un solo template bien hecho que cuatro mediocres.
+- Expansión a otros scopes es roadmap (M3), no MVP.
+
+---
+
+## D003 — Distribución: npm package
+**Fecha:** 2026-06-27
+**Estado:** ✅ Confirmada
+
+**Decisión:** publicar como `npx create-stack-next` en npm.
+
+**Justificación:**
+- `npx X` tiene la fricción más baja posible.
+- Es lo que todos esperan de un scaffolder.
+- Alternativas (GitHub template, CLI local) pierden discoverability.
+
+---
+
+## D004 — Nombre: `create-stack-next`
+**Fecha:** 2026-06-28 (verificado)
+**Estado:** ✅ Confirmada
+
+**Verificación npm (2026-06-28):**
+- ✅ `create-stack-next` → **no existe** (404), disponible para publicar.
+- ⚠️ `create-stack` (sin sufijo) → existe en versión 0.0.4, parece squatting (sin uso real).
+
+**Decisión:** mantener `create-stack-next` como nombre del paquete npm.
+
+**Justificación:**
+- Sigue la convención `create-*` de la familia (create-react-app, create-next-app, create-vite, etc.).
+- El sufijo `-next` define el scope (Next.js), evitando ambigüedad.
+- Verificado disponible en npm.
+- El squat de `create-stack` no nos afecta: si en el futuro queremos usar `create-stack` como marca umbrella para varios scaffolders (`create-stack-next`, `create-stack-remix`, etc.), será una conversación aparte.
+
+**Riesgo:** bajo. Si el día de mañana alguien registra `create-stack-next` antes que nosotros, hay que acelerar la publicación. Resolver cuanto antes.
+
+---
+
+## D005 — Estructura del workspace: por proyecto
+**Fecha:** 2026-06-27
+**Estado:** ✅ Confirmada
+
+**Decisión:**
+```
+workspace/
+  projects/
+    <nombre-del-proyecto>/
+      README.md
+      context/
+        decisions.md
+        conversations/
+```
+
+**Justificación:**
+- Un proyecto = una carpeta. Aislar contexto facilita retomarlo después.
+- `context/` separa documentación viva (decisiones, bitácoras) del código que vendrá.
+
+---
+
+## D006 — Framework del template
+**Fecha:** 2026-06-27 (en discusión)
+**Estado:** ⏳ Pendiente — bloqueante para todo lo demás
+
+**Contexto:** Gonzo arrancó diciendo "intenté estudiar Remix, siempre me pareció superior a Next, pero el mercado va a la gente al otro lado". Hay tensión entre juicio técnico (Remix) y juicio de mercado (Next).
+
+**Opciones sobre la mesa:**
+| Opción | Pros | Contras |
+|---|---|---|
+| Next.js | Market share, devs lo conocen, ofertas laborales, ecosistema | Menos "puro" técnicamente |
+| Remix (React Router v7) | Modelo mental más limpio, web standards, formularios sin libs | Menos share, comunidad chica |
+| Astro | DX moderna, ideal para content-heavy | Menos apto para app full-stack pura |
+| SvelteKit | Rápido, simple, syntax linda | Ecosistema más chico, menos JS devs |
+
+**Insight clave:** para un scaffolder, el framework NO es donde jugás la carta de "mi opinión técnica". Es donde jugás la carta de "maximizo adopción". Pero el scaffolder no tiene que casarse con un framework único — puede ofrecer varios templates bajo el mismo nombre (modelo B en la conversación).
+
+**Decisión:** Next.js. Sin discusión.
+
+**Justificación:** Gonzo cerró la discusión al notar que el sufijo `-next` en el nombre `create-stack-next` ya es una declaración de scope: este scaffolder scaffolea Next. Si en el futuro quiere Remix/Astro/SvelteKit, serán paquetes separados (`create-stack-remix`, etc.) siguiendo el patrón de Yarn/Vite/los `create-*` del ecosistema.
+
+**Consecuencias:**
+- D006 cerrada.
+- D011 cambia: el scaffolder es opinionated al 100%, no hace preguntas sobre framework.
+- Modelo B (plantillas múltiples) descartado.
+- Próximo scaffolder gemelo: `create-stack-remix` (cuando exista demanda).
+
+---
+
+## Decisiones pendientes
+
+| ID | Tema | Estado | Notas |
+|---|---|---|---|
+| D007 | Linter (Biome) | ✅ Cerrada | Arriba en este archivo. |
+| D008 | Testing (Vitest + Playwright) | ✅ Cerrada | Arriba en este archivo. |
+| D009 | AI agent config | ⏳ Por cerrar ahora | Ver sección abajo. |
+| D010 | Validación runtime | ⏳ Por cerrar ahora | Ver sección abajo. |
+| D011 | Estilo del scaffolder (opinionated 100%) | ✅ Cerrada | Implícita desde D006. |
+
+*(No quedan decisiones abiertas después de cerrar D009 y D010. Ver detalle abajo.)*
+
+---
+
+## D007 — Linter: Biome
+**Fecha:** 2026-06-27
+**Estado:** ✅ Confirmada
+
+**Decisión:** Biome (en lugar de ESLint + Prettier por separado).
+
+**Justificación:**
+- Un solo binario reemplaza ESLint + Prettier.
+- Sin 12 paquetes de plugins (`eslint-plugin-react`, `eslint-config-prettier`, etc.).
+- DX: instalás, corrés `biome init`, listo.
+- Formato + lint integrados en un solo comando.
+
+**Riesgo:** bajo. Reversible en 5 minutos si alguna regla queda corta (`biome-ignore`).
+
+---
+
+## D008 — Testing: Vitest + Playwright
+**Fecha:** 2026-06-27
+**Estado:** ✅ Confirmada
+
+**Decisión:** Vitest (unit) + Playwright (e2e).
+
+**Justificación:**
+- Vitest: API similar a Jest, mucho más rápido, soporte nativo de TS y ESM.
+- Playwright: estándar de facto para e2e, ya nadie discute Cypress vs Playwright.
+- Separación clara: unit para lógica, e2e para flujos críticos del usuario.
+
+**Riesgo:** bajo. Ambos mainstream, ambos con docs excelentes, ambos funcionan con Next sin fricción.
+
+---
+
+## D011 — Estilo del scaffolder: opinionated 100%
+**Fecha:** 2026-06-27
+**Estado:** ✅ Confirmada (implícita desde D006)
+
+**Decisión:** el scaffolder no hace preguntas sobre el stack. Solo pide el nombre del proyecto y empieza.
+
+**Justificación:** D006 ya cerró el framework (Next.js, definido por el nombre del paquete). No tiene sentido preguntar cosas que ya están decididas. El scaffolder es opinionated: tomá lo que hay o no lo uses.
+
+**UX resultante:**
+```bash
+$ npx create-stack-next my-app
+✔ Creando proyecto en ./my-app...
+✔ Instalando dependencias...
+✔ Inicializando git...
+✔ Listo. Próximos pasos:
+    cd my-app
+    npm run dev
+```
+
+---
+
+## Decisiones que dejé para revisión de Gonzo (no las tomé yo)
+
+### D009 — AI agent config (pausada)
+**Por qué la pausé:** es la decisión más "política". Define qué agente va preinstalado en cada repo generado. Cambia la identidad del proyecto.
+
+**Opciones:**
+- **A.** OpenClaw config (porque Gonzo lo usa)
+- **B.** Claude / Cursor config (mercado más amplio)
+- **C.** AGENTS.md estándar (agnóstico, sirve para todos)
+- **D.** Combinación: AGENTS.md + config específica OpenClaw como bonus
+
+**Mi voto:** D. Empezar agnóstico (AGENTS.md) y agregar config OpenClaw como bonus opcional. Así el repo no obliga a un agente específico.
+
+### D010 — Validación runtime (pausada)
+**Por qué la pausé:** es la decisión más chica de las tres, pero quiero que Gonzo vea mi recomendación antes de cerrar todo.
+
+**Opciones:**
+- **Zod** — el más maduro, ecosistema más grande, todos los tutoriales lo usan.
+- **Valibot** — más liviano (~1KB), más nuevo.
+- **TypeBox** — para gente que quiere máximo rendimiento y tipos-first.
+
+**Mi voto:** Zod. Madurez + ecosistema + cantidad de ejemplos en internet. Valibot es promisorio pero todavía no tiene la masa crítica.
+
+---
+
+## D009 — AI agent config: AGENTS.md + .openclaw/ bonus
+**Fecha:** 2026-06-28
+**Estado:** ✅ Confirmada
+
+**Contexto:** en 2026 hay varios agentes que leen configs de proyectos (OpenClaw, Claude Code, Cursor, Windsurf, Continue, etc.). `AGENTS.md` se está consolidando como estándar de facto agnóstico. OpenClaw y Cursor ya lo leen; Claude Code lo respeta como fallback.
+
+**Decisión:** el template incluye dos archivos:
+- `AGENTS.md` — config agnóstica, leída por todos los agentes modernos. Contiene descripción del proyecto, comandos clave, convenciones de código.
+- `.openclaw/` — config específica de OpenClaw como bonus. Se incluye siempre pero está claramente separada y es trivial de ignorar si no usás OpenClaw.
+
+**Justificación:**
+- `AGENTS.md` evita vendor lock-in: el repo no queda casado a un solo agente.
+- `.openclaw/` como bonus (no como obligación) reconoce que Gonzo es usuario de OpenClaw y le da integración extra sin castigar a quien usa Cursor.
+- Costo de ignorar un directorio extra: cero.
+
+**Trade-off aceptado:** dos configs que mantener. Es trabajo chico y vale la pena por la flexibilidad.
+
+---
+
+## D010 — Validación runtime: Zod
+**Fecha:** 2026-06-28
+**Estado:** ✅ Confirmada
+
+**Contexto:** necesitamos validar inputs en runtime (env vars, request bodies, formularios). Candidatas: Zod (50KB, masivo), Valibot (~1KB tree-shakeable, nuevo), TypeBox (JSON Schema-first, nicho).
+
+**Decisión:** Zod.
+
+**Justificación:**
+- **DX y ejemplos:** cualquiera que googlee "validate form Next.js" encuentra Zod.
+- **Ecosistema:** `zod-to-openapi`, `drizzle-zod`, integración con `tRPC`, `react-hook-form`, etc.
+- **Mantenimiento:** releases frecuentes, comunidad grande, documentación excelente.
+- **Performance:** no es el cuello de botella en MVP. Una validación de env vars es invisible al usuario.
+
+**Trade-off aceptado:** ~50KB de bundle. Es marginal comparado con el peso del propio Next.js. No optimizamos donde no duele.
+
+**Por qué no Valibot:** promisorio pero todavía sin la masa crítica. Cuando la tenga, migrar es relativamente fácil porque las APIs son similares.
+
+**Por qué no TypeBox:** JSON Schema-first es una abstracción extra que no necesitamos. Más complejo de usar, menos ejemplos disponibles.

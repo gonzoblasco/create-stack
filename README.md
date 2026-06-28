@@ -139,9 +139,8 @@ Razón principal: **ratio de uso**. Un scaffolder bien hecho se usa cada vez que
 
 ## Próximos pasos
 
-- Implementar M2 (D018): `npm run agent` + templates de prompts + `.openclaw/` específico
-- Tests del scaffolder mismo
-- M3 — Familia de scaffolders
+- Tests más profundos del scaffolder
+- M3 — Familia de scaffolders (`create-stack-remix`, etc.)
 
 ---
 
@@ -153,19 +152,18 @@ Razón principal: **ratio de uso**. Un scaffolder bien hecho se usa cada vez que
 
 ---
 
-## Estado del MVP (2026-06-28)
+## Estado actual (2026-06-28)
 
-**M1 cerrado y probado de punta a punta.** ✅
+**M2 cerrado + tests del scaffolder.** ✅
 
-### Lo que funciona
+### Lo que está hecho
 
-- `node ./dist/index.js my-test-app` genera un proyecto completo
-- El proyecto generado pasa lint, typecheck, tests, build y dev
-- `/api/health` responde correctamente
-- Placeholders personalizados funcionan
+- M0, M1 y M2 completos
+- `npm run agent`, `.openclaw/`, `.agents/`, `docs/`
+- 16 tests del scaffolder pasando
+- Publicado en npm (`0.2.0`)
 
 ### Pendiente
 
-- [ ] M2 — AI-native: `npm run agent` + templates de prompts + `.openclaw/` específico (ver D018)
-- [ ] Tests del scaffolder mismo
+- [ ] Tests más profundos del scaffolder
 - [ ] M3 — Familia de scaffolders

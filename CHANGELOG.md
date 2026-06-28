@@ -7,6 +7,17 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
+## [0.3.0] - 2026-06-28
+
+### Changed
+- README completamente reescrito y pulido (M4 Lite)
+- Mejor estructura, badges, tabla de diferencias con create-next-app
+- Sección de casos de uso y AI agents más visibles
+- Roadmap actualizado (M3 pausado + M4 Lite)
+
+### Added
+- `FUTURE.md` con proyectos futuros
+
 ## [0.2.0] - 2026-06-28
 
 ### Added

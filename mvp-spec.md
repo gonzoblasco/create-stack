@@ -228,14 +228,14 @@ export const env = envSchema.parse(process.env);
 
 ## 7. AI agent integration (D009 + D018)
 
-**M1 — D009 ✅:** el template incluye `AGENTS.md` agnóstico (leído por OpenClaw, Claude Code, Cursor, etc.) + `.openclaw/` como bonus específico.
+**M1 — D009 ✅:** el template incluye `AGENTS.md` agnóstico (leído por OpenClaw, Claude Code, Cursor, etc.).
 
-**M2 — D018 ⏳:** además del `AGENTS.md`, el template incluye:
-- Comando `npm run agent` que abre una sesión del agente apuntando al proyecto.
-- Templates de prompts en `.openclaw/prompts/` para tareas típicas.
-- `.openclaw/` con config mínima para que el agente habite el proyecto desde el primer momento.
+**M2 — D018 ✅:** además del `AGENTS.md`, el template incluye:
+- Comando `npm run agent`.
+- Templates de prompts en `.openclaw/prompts/`.
+- `.openclaw/` con config mínima.
 
-**Por qué:** AGENTS.md es el estándar emergente (lo leen OpenClaw, Claude Code, Cursor, etc.). Escribirlo agnóstico no nos casa con ningún vendor. M2 suma `.openclaw/` específico porque Gonzo usa OpenClaw y queremos integración real, no solo "config vacía".
+**Por qué:** Tener `.openclaw/` en la raíz del proyecto es una **buena práctica** para quien usa OpenClaw (al igual que tener tu propio `.openclaw/` en tu máquina). `AGENTS.md` sigue siendo agnóstico para que el proyecto funcione con cualquier agente moderno. No es vendor lock-in; es metadata útil que el dueño del repo puede aprovechar o ignorar.
 
 ---
 

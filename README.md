@@ -33,7 +33,7 @@ Nuestro diferenciador: scaffolder que **asume cómo trabaja un dev moderno en 20
 - Testing (Vitest + Playwright)
 - Lint + format (Biome, no ESLint+Prettier por separado)
 - Type safety (TS strict + Zod en bordes)
-- **AI agents integrados** — el repo incluye configuración para que un agente (OpenClaw, Claude, etc.) lo habite
+- **AI agents integrados** — `AGENTS.md` (agnóstico) + `.openclaw/` (buena práctica para usuarios de OpenClaw)
 - CI básico (GitHub Actions)
 - Git hooks (Husky + lint-staged)
 - Estructura de directorios opinada

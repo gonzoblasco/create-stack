@@ -44,9 +44,9 @@ Eso ejecuta `openclaw chat`, que abre la TUI local con el `AGENTS.md` ya cargado
 
 Decisión documentada en `D009` y `D018` del proyecto `create-stack-next`:
 
-- `AGENTS.md` es agnóstico. No queremos casar al usuario con un vendor.
-- `.openclaw/` es bonus. Reconoce que el scaffolder está hecho por un usuario de OpenClaw, pero no obliga a nadie a usarlo.
-- Si usás Claude Code, Cursor u otro: este directorio es ruido. Lo podés borrar sin consecuencias.
+- Tener `.openclaw/` en la raíz de un proyecto es una **buena práctica** para quien usa OpenClaw (al igual que tener tu propio `.openclaw/` en la raíz de tu máquina).
+- `AGENTS.md` es agnóstico: el proyecto funciona igual de bien con cualquier agente moderno.
+- No es vendor lock-in. Si no usás OpenClaw, simplemente ignorás (o borrás) este directorio. El costo es cero.
 
 ## Más info
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://openclaw.dev/schema/config.json",
-  "name": "create-stack-next",
+  "name": "{{PROJECT_NAME}}",
   "description": "Config mínima para que OpenClaw habite el proyecto. El proyecto se autogobierna con AGENTS.md; este archivo es solo metadata.",
   "agent": {
     "contextFiles": [
@@ -16,6 +16,6 @@
     ]
   },
   "prompts": {
-    "directory": "prompts"
+    "directory": ".openclaw/prompts"
   }
 }

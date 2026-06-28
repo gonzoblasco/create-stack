@@ -218,22 +218,22 @@ $ npx create-stack-next my-app
 
 ---
 
-## D009 — AI agent config: AGENTS.md + .openclaw/ bonus
-**Fecha:** 2026-06-28
+## D009 — AI agent config: AGENTS.md + .openclaw/ (buena práctica)
+**Fecha:** 2026-06-28 (revisada 2026-06-28)
 **Estado:** ✅ Confirmada
 
-**Contexto:** en 2026 hay varios agentes que leen configs de proyectos (OpenClaw, Claude Code, Cursor, Windsurf, Continue, etc.). `AGENTS.md` se está consolidando como estándar de facto agnóstico. OpenClaw y Cursor ya lo leen; Claude Code lo respeta como fallback.
+**Contexto:** en 2026 hay varios agentes que leen configs de proyectos (OpenClaw, Claude Code, Cursor, Windsurf, Continue, etc.). `AGENTS.md` se está consolidando como estándar de facto agnóstico. Tener un `.openclaw/` en la raíz del proyecto es una **buena práctica** para quien usa OpenClaw, al igual que tener tu propio `.openclaw/` en la raíz de tu máquina. No es vendor lock-in; es metadata específica que el dueño del repo puede aprovechar o ignorar.
 
-**Decisión:** el template incluye dos archivos:
-- `AGENTS.md` — config agnóstica, leída por todos los agentes modernos. Contiene descripción del proyecto, comandos clave, convenciones de código.
-- `.openclaw/` — config específica de OpenClaw como bonus. Se incluye siempre pero está claramente separada y es trivial de ignorar si no usás OpenClaw.
+**Decisión:** el template incluye:
+- `AGENTS.md` — config agnóstica, leída por todos los agentes modernos.
+- `.openclaw/` — config específica de OpenClaw. Se incluye por default porque es una buena práctica para usuarios de OpenClaw (no es obligación, pero tampoco se esconde).
 
 **Justificación:**
-- `AGENTS.md` evita vendor lock-in: el repo no queda casado a un solo agente.
-- `.openclaw/` como bonus (no como obligación) reconoce que Gonzo es usuario de OpenClaw y le da integración extra sin castigar a quien usa Cursor.
-- Costo de ignorar un directorio extra: cero.
+- `AGENTS.md` evita vendor lock-in: el repo funciona igual de bien con cualquier agente moderno.
+- `.openclaw/` como buena práctica reconoce que el scaffolder lo hizo un usuario de OpenClaw y le da a esos usuarios una experiencia de primera clase sin castigar a quienes usan otro agente.
+- El costo de ignorar un directorio extra es cero. Si no usás OpenClaw, simplemente no lo mirás (o lo borrás).
 
-**Trade-off aceptado:** dos configs que mantener. Es trabajo chico y vale la pena por la flexibilidad.
+**Trade-off aceptado:** dos archivos de configuración. Vale la pena porque separa claramente lo agnóstico de lo específico.
 
 ---
 
@@ -410,8 +410,8 @@ $ npx create-stack-next my-app
 
 **Justificación:**
 - Las tres condiciones son el mínimo para que el scaffolder cumpla la promesa de "AI-native".
-- M2 no es una reescritura: reutiliza todo lo de M1 (template, AGENTS.md, Biome, Vitest, etc.).
-- El `AGENTS.md` ya está en M1 como agnóstico; M2 lo complementa con `.openclaw/` específico.
+- M2 no es una reescritura: reutiliza todo lo de M1.
+- `.openclaw/` en la raíz del proyecto generado es una **buena práctica** (al igual que tener tu propio `.openclaw/` en tu máquina). No es vendor lock-in; es metadata que el dueño del repo puede usar o ignorar.
 
 **Criterio de éxito verificable:** clonar un proyecto generado en una máquina con OpenClaw instalado y correr `npm run agent` debe abrir una sesión con el agente ya contextualizado por el `AGENTS.md` del proyecto.
 

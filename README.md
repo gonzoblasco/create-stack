@@ -6,23 +6,21 @@
 
 ## Estado actual
 
-**Fase:** ✅ M1 cerrado y probado
+**Fase:** ✅ M2 cerrado (M1 + AI-native)
 
 **Repo:** https://github.com/gonzoblasco/create-stack-next
 
 **Última actualización:** 2026-06-28
 
-**M1 completado:**
-- [x] Scaffolder funcional (`src/`, `dist/`)
-- [x] Template completo y validado
-- [x] Generación de proyectos lista (`node ./dist/index.js my-app`)
-- [x] Todos los checks pasan en el proyecto generado (lint, typecheck, test, build)
-- [x] Repo público creado en GitHub
-- [x] Publicado en npm como `create-stack-next@0.1.0`
+**M1 + M2 completados:**
+- [x] Scaffolder funcional + template completo
+- [x] Repo público + npm publish (`0.1.0`)
+- [x] `npm run agent` + `.openclaw/` con prompts (feature, refactor, bugfix, tests)
+- [x] 18 decisiones cerradas (D001–D018)
 
 **Pendiente:**
-- [ ] M2 — AI-native: `npm run agent` + templates de prompts + `.openclaw/` específico (ver D018)
 - [ ] Tests del scaffolder mismo
+- [ ] M3 — Familia de scaffolders
 
 ---
 

@@ -135,8 +135,9 @@ workspace/
 | D015 | Lockfile del scaffolder (commitear) | ✅ | 2026-06-28 |
 | D016 | Ignorar artefactos de prueba local | ✅ | 2026-06-28 |
 | D017 | npm publish (`create-stack-next@0.1.0`) | ✅ | 2026-06-28 |
+| D018 | Alcance de M2 (AI-native) | `npm run agent` + templates de prompts + `.openclaw/` específico | ✅ | 2026-06-28 |
 
-**Total: 17 decisiones cerradas, 0 pendientes.**
+**Total: 18 decisiones cerradas, 0 pendientes.**
 
 ---
 
@@ -413,3 +414,11 @@ $ npx create-stack-next my-app
 - El `AGENTS.md` ya está en M1 como agnóstico; M2 lo complementa con `.openclaw/` específico.
 
 **Criterio de éxito verificable:** clonar un proyecto generado en una máquina con OpenClaw instalado y correr `npm run agent` debe abrir una sesión con el agente ya contextualizado por el `AGENTS.md` del proyecto.
+
+**Implementación (2026-06-28):** M2 cerrado. El template incluye:
+- `npm run agent` en `package.json`
+- `.openclaw/config.json` con contexto e ignore patterns
+- `.openclaw/prompts/` con 4 templates (feature, refactor, bugfix, tests)
+- `.openclaw/README.md` explicando el uso
+
+Todo commiteado y pusheado a `main`. D018 cerrado.

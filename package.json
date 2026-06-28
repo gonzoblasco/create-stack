@@ -4,7 +4,7 @@
   "description": "Scaffolder opinado para proyectos Next.js 15 con TypeScript estricto, Biome, Vitest, Playwright y AI agent config preinstalado.",
   "type": "module",
   "bin": {
-    "create-stack-next": "./dist/index.js"
+    "create-stack-next": "dist/index.js"
   },
   "files": [
     "dist",

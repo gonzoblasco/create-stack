@@ -6,32 +6,23 @@
 
 ## Estado actual
 
-**Fase:** ✅ M0 cerrado — listo para M1
+**Fase:** ✅ M1 cerrado y probado
+
+**Repo:** https://github.com/gonzoblasco/create-stack-next
 
 **Última actualización:** 2026-06-28
 
-**M0 cerrado (todas las decisiones tomadas):**
-- [x] Tipo de producto: scaffolder (opción A3 — ver `context/decisions.md`)
-- [x] Qué scaffolea: app web full-stack
-- [x] Nombre del paquete: **`create-stack-next`** ✅ verificado disponible en npm (D004)
-- [x] Distribución: npm package (`npx create-stack-next`)
-- [x] Framework del template: **Next.js** (D006)
-- [x] Linter: **Biome** (D007)
-- [x] Testing: **Vitest + Playwright** (D008)
-- [x] AI agent config: **AGENTS.md + .openclaw/ bonus** (D009)
-- [x] Validación runtime: **Zod** (D010)
-- [x] Estilo del scaffolder: **opinionated 100%** (D011)
-- [x] MVP spec escrito y aprobado: `mvp-spec.md`
+**M1 completado:**
+- [x] Scaffolder funcional (`src/`, `dist/`)
+- [x] Template completo y validado
+- [x] Generación de proyectos lista (`node ./dist/index.js my-app`)
+- [x] Todos los checks pasan en el proyecto generado (lint, typecheck, test, build)
+- [x] Repo público creado en GitHub
 
-**No quedan decisiones pendientes. M0 cerrado.
-
-**Próxima fase — M1: Implementación**
-- [ ] Inicializar repo `create-stack-next` (git + package.json + bin)
-- [ ] Construir el scaffolder (`src/cli.ts`, `src/copy-template.ts`)
-- [ ] Construir el template (`template/`)
-- [ ] Probar localmente con `node ./dist/index.js my-app`
-- [ ] Publicar a npm
-- [ ] Crear repo público en GitHub
+**Pendiente para publicar:**
+- [ ] `npm publish`
+- [ ] Tests del scaffolder mismo
+- [ ] M2 — AI-native
 
 ---
 
@@ -147,12 +138,11 @@ Razón principal: **ratio de uso**. Un scaffolder bien hecho se usa cada vez que
 
 ---
 
-## Próximos pasos inmediatos
+## Próximos pasos
 
-1. Decidir stack final (Next.js vs Astro vs Remix vs SvelteKit)
-2. Confirmar nombre y verificar disponibilidad en npm
-3. Escribir **MVP spec**: lista exacta de archivos que genera, comandos que expone, defaults que asume
-4. Spawnear equipo de sub-agentes con el contexto de este doc
+- Publicar a npm (`npm publish`)
+- Tests del scaffolder
+- M2 — AI-native
 
 ---
 
@@ -164,21 +154,19 @@ Razón principal: **ratio de uso**. Un scaffolder bien hecho se usa cada vez que
 
 ---
 
-## Estado del MVP (2026-06-28 01:40 GMT-3)
+## Estado del MVP (2026-06-28)
 
 **M1 cerrado y probado de punta a punta.** ✅
 
 ### Lo que funciona
 
-- `npx create-stack-next my-test-app` (con `node ./dist/index.js` localmente) genera un proyecto completo
-- El proyecto generado pasa `npm run lint`, `npm run typecheck`, `npm run test:run`, `npm run build`, `npm run dev`
-- Endpoint `/api/health` responde JSON correcto
-- Personalización de placeholders `{{PROJECT_NAME}}` y `{{PM}}` funciona
+- `node ./dist/index.js my-test-app` genera un proyecto completo
+- El proyecto generado pasa lint, typecheck, tests, build y dev
+- `/api/health` responde correctamente
+- Placeholders personalizados funcionan
 
-### Pendiente para publicar
+### Pendiente
 
-- [ ] Crear repo público en GitHub
-- [ ] Configurar CI en GitHub Actions para el scaffolder mismo
-- [ ] Tests del scaffolder (no solo del template)
-- [ ] `npm publish` cuando esté listo
-- [ ] M2 — AI-native (comando `npm run agent`)
+- [ ] `npm publish` (para que funcione con `npx`)
+- [ ] Tests del scaffolder mismo
+- [ ] M2 — AI-native

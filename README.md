@@ -110,6 +110,6 @@ MIT
 
 ---
 
-**Creado con ❤️ por Gonzo y Gonza (OpenClaw)**
+**Creado con ❤️ por Gonzo y Kanam (OpenClaw)**
 
 > Primera utilidad publicada. M4 Lite en progreso.

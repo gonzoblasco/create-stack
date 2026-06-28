@@ -415,10 +415,10 @@ $ npx create-stack-next my-app
 
 **Criterio de éxito verificable:** clonar un proyecto generado en una máquina con OpenClaw instalado y correr `npm run agent` debe abrir una sesión con el agente ya contextualizado por el `AGENTS.md` del proyecto.
 
-**Implementación (2026-06-28):** M2 cerrado. El template incluye:
+**Implementación (2026-06-28):** M2 cerrado y extendido. El template incluye:
 - `npm run agent` en `package.json`
-- `.openclaw/config.json` con contexto e ignore patterns
-- `.openclaw/prompts/` con 4 templates (feature, refactor, bugfix, tests)
-- `.openclaw/README.md` explicando el uso
+- `docs/` (architecture, decisions, contributing)
+- `.openclaw/` (config + prompts + README)
+- `.agents/` (config genérica + prompts compartidos)
 
 Todo commiteado y pusheado a `main`. D018 cerrado.

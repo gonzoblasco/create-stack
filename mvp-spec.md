@@ -232,10 +232,11 @@ export const env = envSchema.parse(process.env);
 
 **M2 — D018 ✅:** además del `AGENTS.md`, el template incluye:
 - Comando `npm run agent`.
-- Templates de prompts en `.openclaw/prompts/`.
-- `.openclaw/` con config mínima.
+- `docs/` (architecture, decisions, contributing).
+- `.openclaw/` (config + prompts).
+- `.agents/` (config genérica + prompts compartidos).
 
-**Por qué:** Tener `.openclaw/` en la raíz del proyecto es una **buena práctica** para quien usa OpenClaw (al igual que tener tu propio `.openclaw/` en tu máquina). `AGENTS.md` sigue siendo agnóstico para que el proyecto funcione con cualquier agente moderno. No es vendor lock-in; es metadata útil que el dueño del repo puede aprovechar o ignorar.
+**Por qué:** Tener `.openclaw/` y `.agents/` en la raíz del proyecto es una **buena práctica** para agentes. `AGENTS.md` sigue siendo agnóstico. No es vendor lock-in; es metadata útil que el dueño del repo puede aprovechar o ignorar.
 
 ---
 

@@ -1,6 +1,6 @@
 # Refactor: Mejorar estructura sin cambiar comportamiento
 
-> Prompt template para pedirle al agente que mejore la estructura interna de código existente.
+> Prompt template para pedirle al agente que mejole la estructura interna de código existente.
 > El invariante crítico: **los tests deben seguir pasando sin modificarse** (o solo modificarse si el contrato público cambió, y vos lo aprobás).
 
 ---

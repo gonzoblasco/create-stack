@@ -26,6 +26,7 @@
 {{PM}} run test:run     # Vitest single-run (para CI)
 {{PM}} run test:e2e     # Playwright
 {{PM}} run test:e2e:ui  # Playwright con UI
+{{PM}} run agent        # abrir sesión con OpenClaw
 ```
 
 ## Estructura
@@ -62,6 +63,12 @@ tests/
 ## AI agents
 
 Este proyecto incluye `AGENTS.md` con instrucciones para AI agents (OpenClaw, Claude Code, Cursor, etc.). El agente entiende la estructura y puede ayudarte a trabajar en el código.
+
+### Documentación adicional para agentes
+
+- `docs/` — arquitectura, decisiones y guías de contribución
+- `.openclaw/` — config y prompts específicos de OpenClaw
+- `.agents/` — config y prompts genéricos (compartidos)
 
 ## CI/CD
 

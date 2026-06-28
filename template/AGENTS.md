@@ -35,6 +35,13 @@ npm run test:e2e     # playwright
 npm run agent        # abrir sesión con OpenClaw (usa .openclaw/ + AGENTS.md)
 ```
 
+## Estructura de documentación para agentes
+
+- `AGENTS.md` — este archivo (instrucciones agnósticas)
+- `docs/` — arquitectura, decisiones y guías de contribución
+- `.openclaw/` — config y prompts específicos de OpenClaw
+- `.agents/` — config y prompts genéricos (compartidos entre agentes)
+
 ## Estructura importante
 
 - `src/app/` — rutas y API routes (App Router)

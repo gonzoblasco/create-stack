@@ -6,10 +6,11 @@
 
 ## Estado actual
 
-**Fase:** ✅ M2 cerrado (M1 + AI-native)
+**Versión actual:** `0.2.0` (M2 + tests del scaffolder)
 
 **Repo:** https://github.com/gonzoblasco/create-stack-next
 **npm:** https://www.npmjs.com/package/create-stack-next
+**Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 **Última actualización:** 2026-06-28
 

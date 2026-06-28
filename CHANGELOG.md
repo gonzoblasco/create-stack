@@ -1,0 +1,49 @@
+# Changelog
+
+Todas las versiones notables de este proyecto se documentan en este archivo.
+
+El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [0.2.0] - 2026-06-28
+
+### Added
+- Soporte completo para AI agents (M2):
+  - Comando `npm run agent`
+  - Carpeta `.openclaw/` con config y prompts (feature, refactor, bugfix, tests)
+  - Carpeta `.agents/` con config genérica y prompts compartidos
+  - Carpeta `docs/` con `architecture.md`, `decisions.md` y `contributing.md`
+- Tests del scaffolder:
+  - `cli.test.ts` (parseo de flags y validación de nombres)
+  - `copy-template.test.ts` (reemplazo de placeholders)
+  - `integration.test.ts` (generación completa + checks de calidad)
+- `AGENTS.md` actualizado con instrucciones para agentes
+- Formateo completo del template con Biome
+
+### Changed
+- `README.md` actualizado para reflejar M2 cerrado
+- Justificación de `.openclaw/` y `.agents/` actualizada como "buena práctica"
+
+### Fixed
+- Varios archivos del template ahora pasan `biome check` correctamente
+
+---
+
+## [0.1.0] - 2026-06-28
+
+### Added
+- Primera versión pública del scaffolder
+- Template de Next.js 15 con:
+  - TypeScript estricto
+  - Biome
+  - Vitest + Playwright
+  - Zod
+  - GitHub Actions (CI + e2e)
+  - `AGENTS.md`
+- Publicación en npm
+- Repo público en GitHub
+
+[0.2.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/gonzoblasco/create-stack-next/releases/tag/v0.1.0

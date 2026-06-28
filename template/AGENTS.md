@@ -32,6 +32,7 @@ npm run typecheck    # tsc --noEmit
 npm run test         # vitest (watch mode)
 npm run test:run     # vitest (single run)
 npm run test:e2e     # playwright
+npm run agent        # abrir sesión con OpenClaw (usa .openclaw/ + AGENTS.md)
 ```
 
 ## Estructura importante

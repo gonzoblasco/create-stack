@@ -9,6 +9,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-06-29
+
 ### Added
 - `CHANGELOG.md` base dentro de la carpeta `template/` para que los nuevos proyectos lo incluyan por defecto.
 - Instrucción en `template/AGENTS.md` obligando a los agentes de IA a mantener actualizado el `CHANGELOG.md` de los proyectos generados.
@@ -62,6 +64,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Publicación en npm
 - Repo público en GitHub
 
+[Unreleased]: https://github.com/gonzoblasco/create-stack-next/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/gonzoblasco/create-stack-next/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/gonzoblasco/create-stack-next/releases/tag/v0.1.0

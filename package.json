@@ -1,52 +1,49 @@
 {
-  "name": "create-stack-next",
-  "version": "0.5.0",
-  "description": "Scaffolder opinado para proyectos Next.js 15 con TypeScript estricto, Biome, Vitest, Playwright y AI agent config preinstalado.",
-  "type": "module",
-  "bin": {
-    "create-stack-next": "dist/index.js"
-  },
-  "files": [
-    "dist",
-    "template"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "start": "node ./dist/index.js",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "prepublishOnly": "npm run build"
-  },
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "keywords": [
-    "create-stack-next",
-    "scaffolder",
-    "next.js",
-    "nextjs",
-    "typescript",
-    "biome",
-    "vitest",
-    "playwright",
-    "ai-agent"
-  ],
-  "license": "MIT",
-  "dependencies": {
-    "@clack/prompts": "^0.9.0",
-    "picocolors": "^1.1.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.0",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
-  },
-  "publishConfig": {
-    "access": "public"
-  }
+	"name": "create-stack-next",
+	"version": "0.5.0",
+	"description": "Scaffolder opinado para proyectos Next.js 15 con TypeScript estricto, Biome, Vitest, Playwright y AI agent config preinstalado.",
+	"type": "module",
+	"bin": {
+		"create-stack-next": "dist/index.js"
+	},
+	"files": ["dist", "template"],
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"start": "node ./dist/index.js",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest",
+		"test:run": "vitest run",
+		"prepublishOnly": "npm run build"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"keywords": [
+		"create-stack-next",
+		"scaffolder",
+		"next.js",
+		"nextjs",
+		"typescript",
+		"biome",
+		"vitest",
+		"playwright",
+		"ai-agent"
+	],
+	"license": "MIT",
+	"dependencies": {
+		"@clack/prompts": "^0.9.0",
+		"picocolors": "^1.1.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.0",
+		"@types/node": "^22.0.0",
+		"typescript": "^5.6.0",
+		"vitest": "^2.1.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }

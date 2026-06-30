@@ -92,19 +92,15 @@ Como agente de IA que trabaja en este proyecto, DEBES seguir este ciclo de maner
 ## Cómo pedirle cosas al agente
 
 Bien:
-
 > "Agregá un componente Button en `src/components/ui/Button.tsx` con las variantes primary, secondary y ghost. Incluye tests unitarios."
 
 Mal:
-
 > "Mejorá el botón" (demasiado vago)
 
 Bien:
-
 > "Refactorizá `src/lib/api.ts` para usar Zod en vez de chequeos manuales. Mantené los tests pasando."
 
 Mal:
-
 > "Hacé el código más lindo"
 
 ## Recursos

@@ -9,6 +9,14 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Added
+- **AI Workflow Injection**: Todos los proyectos generados (`template/` y `template-api/`) ahora incluyen de fábrica archivos semilla para orquestar agentes de IA (`ROADMAP.md`, `AGENT_TASKS.md`, `HANDOFF.md`).
+- **Prompt Kickoff**: Se añadió un prompt pre-configurado en `AGENTS.md` del template para que el usuario inicie de inmediato la Fase 1 del proyecto usando cualquier LLM (Cursor, OpenClaw, etc).
+- Decisiones técnicas fundacionales (ADR D004 y D005) inyectadas en los templates generados para prevenir amnesia contextual en la IA.
+
+### Fixed
+- Se añadió `vitest.config.ts` en la raíz para incluir estrictamente `src/` e impedir que Vitest corra tests anidados dentro de `template/` y carpetas de prueba locales, arreglando conflictos con Playwright.
+
 ## [0.5.0] - 2026-06-30
 
 ### Added

@@ -11,6 +11,9 @@
 
 ```bash
 npx create-stack-next my-app
+
+# Si solo necesitás un Backend (API Route Handlers):
+npx create-stack-next my-api --template api
 ```
 
 Eso es todo. El comando genera un proyecto Next.js 15 listo para empezar a desarrollar.
@@ -26,8 +29,16 @@ El proyecto generado viene con todo preconfigurado:
 - **Vitest** (tests unitarios) + **Playwright** (tests e2e)
 - **Zod** para validación runtime
 - **GitHub Actions** (CI + e2e)
-- **AGENTS.md** + `.openclaw/` + `.agents/` (integración con AI agents)
+- **AGENTS.md** + workflow de IA inyectado para desarrollo asistido
 - `docs/` con arquitectura, decisiones y guía de contribución
+
+### Template API (`--template api`)
+Si preferís generar un backend puramente funcional sin React components:
+- **Next.js 15 App Router** (Rutas de API).
+- **Drizzle ORM** + SQLite pre-configurado para base de datos.
+- Utilidades estandarizadas de Error Handling y Respuestas API.
+- Middleware base con validación de Bearer Token.
+- **node-mocks-http** + Vitest para probar endpoints velozmente.
 
 ---
 
@@ -70,8 +81,8 @@ El proyecto incluye:
 El proyecto se encuentra en desarrollo activo hacia la versión estable (v1.0.0). Podés ver el detalle completo y estado actual en [`ROADMAP.md`](ROADMAP.md).
 
 - **Fase 1: Robustez Absoluta** ✅ (Completada en v0.5.0)
-- **Fase 2: Flexibilidad Interna y DX** ⏳ En progreso
-- **Fase 3: Adopción y Documentación** 🎯 Próximo
+- **Fase 2: Flexibilidad Interna y DX** ✅ (Completada en v0.6.0)
+- **Fase 3: Adopción y Documentación** ⏳ En progreso
 
 Ver [`FUTURE.md`](FUTURE.md) para el registro de ideas futuras.
 

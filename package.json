@@ -1,12 +1,16 @@
 {
 	"name": "create-stack-next",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Scaffolder opinado para proyectos Next.js 15 con TypeScript estricto, Biome, Vitest, Playwright y AI agent config preinstalado.",
 	"type": "module",
 	"bin": {
 		"create-stack-next": "dist/index.js"
 	},
-	"files": ["dist", "template", "template-api"],
+	"files": [
+		"dist",
+		"template",
+		"template-api"
+	],
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",

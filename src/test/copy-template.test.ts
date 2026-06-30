@@ -1,12 +1,13 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { copyTemplate } from "../copy-template.js";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { copyTemplate, listFiles } from "../copy-template.js";
 
 describe("copyTemplate", () => {
 	let tempDir: string;
 	let targetDir: string;
+	const templateDir = join(process.cwd(), "template");
 
 	beforeEach(async () => {
 		tempDir = await mkdtemp(join(tmpdir(), "create-stack-test-"));
@@ -17,9 +18,9 @@ describe("copyTemplate", () => {
 		await rm(tempDir, { recursive: true, force: true });
 	});
 
-	it("copia el template y reemplaza el nombre del proyecto", async () => {
-		const templateDir = join(process.cwd(), "template");
+	// ─── Reemplazo de placeholders ───────────────────────
 
+	it("copia el template y reemplaza el nombre del proyecto en package.json", async () => {
 		await copyTemplate(templateDir, targetDir, {
 			projectName: "my-test-app",
 			pm: "npm",
@@ -33,8 +34,6 @@ describe("copyTemplate", () => {
 	});
 
 	it("reemplaza el package manager en README", async () => {
-		const templateDir = join(process.cwd(), "template");
-
 		await copyTemplate(templateDir, targetDir, {
 			projectName: "my-test-app",
 			pm: "pnpm",
@@ -44,5 +43,139 @@ describe("copyTemplate", () => {
 		const readme = await readFile(readmePath, "utf-8");
 
 		expect(readme).toContain("pnpm run dev");
+	});
+
+	it("reemplaza el nombre del proyecto en README", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "custom-name",
+			pm: "npm",
+		});
+
+		const readmePath = join(targetDir, "README.md");
+		const readme = await readFile(readmePath, "utf-8");
+
+		expect(readme).toContain("custom-name");
+	});
+
+	// ─── Estructura completa de archivos ─────────────────
+
+	it("copia todos los archivos del template (verificación exhaustiva)", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-app",
+			pm: "npm",
+		});
+
+		const templateFiles = await listFiles(templateDir);
+		const targetFiles = await listFiles(targetDir);
+
+		// Cada archivo del template debe existir en el destino
+		for (const file of templateFiles) {
+			expect(targetFiles, `Archivo faltante en destino: ${file}`).toContain(
+				file,
+			);
+		}
+	});
+
+	it("copia dotfiles correctamente (.gitignore)", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-app",
+			pm: "npm",
+		});
+
+		const gitignorePath = join(targetDir, ".gitignore");
+		const gitignore = await readFile(gitignorePath, "utf-8");
+
+		expect(gitignore).toBeTruthy();
+		expect(gitignore).toContain("node_modules");
+	});
+
+	it("copia directorios dotfiles (.openclaw, .agents, .github, .vscode)", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-app",
+			pm: "npm",
+		});
+
+		const dotDirs = [".openclaw", ".agents", ".github", ".vscode"];
+
+		for (const dotDir of dotDirs) {
+			const dirPath = join(targetDir, dotDir);
+			const dirStat = await stat(dirPath);
+			expect(dirStat.isDirectory(), `${dotDir} debería ser un directorio`).toBe(
+				true,
+			);
+		}
+	});
+
+	it("copia paths anidados profundos (docs/, src/app/, tests/e2e/)", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-app",
+			pm: "npm",
+		});
+
+		const nestedPaths = ["docs", "src", "tests"];
+
+		for (const nestedPath of nestedPaths) {
+			const dirPath = join(targetDir, nestedPath);
+			const dirStat = await stat(dirPath);
+			expect(
+				dirStat.isDirectory(),
+				`${nestedPath} debería existir como directorio`,
+			).toBe(true);
+		}
+	});
+
+	it("archivos sin placeholders se copian sin modificar", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-app",
+			pm: "npm",
+		});
+
+		// biome.json no debería tener placeholders ni ser modificado
+		const biomeOriginal = await readFile(
+			join(templateDir, "biome.json"),
+			"utf-8",
+		);
+		const biomeCopied = await readFile(join(targetDir, "biome.json"), "utf-8");
+
+		expect(biomeCopied).toBe(biomeOriginal);
+	});
+
+	it("tsconfig.json se copia sin modificar", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-app",
+			pm: "npm",
+		});
+
+		const tsconfigOriginal = await readFile(
+			join(templateDir, "tsconfig.json"),
+			"utf-8",
+		);
+		const tsconfigCopied = await readFile(
+			join(targetDir, "tsconfig.json"),
+			"utf-8",
+		);
+
+		expect(tsconfigCopied).toBe(tsconfigOriginal);
+	});
+});
+
+// ─── Tests de listFiles helper ───────────────────────────
+
+describe("listFiles", () => {
+	it("devuelve la lista ordenada de archivos del template", async () => {
+		const templateDir = join(process.cwd(), "template");
+		const files = await listFiles(templateDir);
+
+		expect(files.length).toBeGreaterThan(0);
+		// Verificar que la lista está ordenada
+		const sorted = [...files].sort();
+		expect(files).toEqual(sorted);
+	});
+
+	it("incluye dotfiles en la lista", async () => {
+		const templateDir = join(process.cwd(), "template");
+		const files = await listFiles(templateDir);
+
+		expect(files).toContain(".gitignore");
 	});
 });

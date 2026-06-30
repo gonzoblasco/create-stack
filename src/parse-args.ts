@@ -42,7 +42,9 @@ export function parseArgs(argv: string[]): Args {
 					throw new Error("--pm requiere un valor (npm, pnpm, yarn, bun)");
 				}
 				if (!isValidPM(next)) {
-					throw new Error(`--pm inválido: "${next}". Valores válidos: ${VALID_PMS.join(", ")}`);
+					throw new Error(
+						`--pm inválido: "${next}". Valores válidos: ${VALID_PMS.join(", ")}`,
+					);
 				}
 				args.pm = next;
 				i++;

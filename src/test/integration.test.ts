@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { spawn } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { spawn } from "node:child_process";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { copyTemplate } from "../copy-template.js";
 
 function runCommand(cmd: string, cwd: string): Promise<void> {

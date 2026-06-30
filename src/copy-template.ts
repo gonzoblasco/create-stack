@@ -41,7 +41,10 @@ export async function copyTemplate(
  * Lee el package.json generado, le pone el nombre del proyecto.
  * El template tiene un nombre placeholder que sobreescribimos.
  */
-async function customizePackageJson(targetDir: string, projectName: string): Promise<void> {
+async function customizePackageJson(
+	targetDir: string,
+	projectName: string,
+): Promise<void> {
 	const packageJsonPath = join(targetDir, "package.json");
 
 	let raw: string;
@@ -56,14 +59,22 @@ async function customizePackageJson(targetDir: string, projectName: string): Pro
 	const pkg = JSON.parse(raw) as { name?: string; [key: string]: unknown };
 	pkg.name = projectName;
 
-	await writeFile(packageJsonPath, `${JSON.stringify(pkg, null, 2)}\n`, "utf-8");
+	await writeFile(
+		packageJsonPath,
+		`${JSON.stringify(pkg, null, 2)}\n`,
+		"utf-8",
+	);
 }
 
 /**
  * Personaliza el README con el nombre del proyecto y el PM correcto.
  * Reemplaza placeholders {{PROJECT_NAME}} y {{PM}} si los encuentra.
  */
-async function customizeReadme(targetDir: string, projectName: string, pm: string): Promise<void> {
+async function customizeReadme(
+	targetDir: string,
+	projectName: string,
+	pm: string,
+): Promise<void> {
 	const readmePath = join(targetDir, "README.md");
 
 	let raw: string;

@@ -1,11 +1,11 @@
 import { spawn } from "node:child_process";
-import { existsSync } from "node:fs";
+import { constants, accessSync, existsSync, readdirSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import pc from "picocolors";
 import { copyTemplate } from "./copy-template.js";
-import { parseArgs, type Args } from "./parse-args.js";
+import { type Args, parseArgs } from "./parse-args.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,7 +31,20 @@ ${pc.bold("Ejemplos:")}
 `);
 }
 
-function validateProjectName(name: string): { ok: true } | { ok: false; reason: string } {
+/**
+ * Valida el nombre del proyecto.
+ *
+ * Reglas:
+ * - No puede estar vacío
+ * - Solo lowercase, números, guiones y underscores
+ * - No puede empezar con . ni -
+ * - Si el directorio destino ya existe, solo se acepta si está vacío
+ *   (se ignoran archivos del sistema como .DS_Store)
+ * - El directorio padre debe tener permisos de escritura
+ */
+export function validateProjectName(
+	name: string,
+): { ok: true } | { ok: false; reason: string } {
 	if (!name) {
 		return { ok: false, reason: "Falta el nombre del proyecto" };
 	}
@@ -51,8 +64,31 @@ function validateProjectName(name: string): { ok: true } | { ok: false; reason: 
 		};
 	}
 
+	// Si el directorio ya existe, verificar si está vacío
 	if (existsSync(name)) {
-		return { ok: false, reason: `El directorio "${name}" ya existe` };
+		try {
+			const entries = readdirSync(name);
+			// Ignorar archivos del sistema como .DS_Store
+			const meaningfulEntries = entries.filter(
+				(entry) => entry !== ".DS_Store" && entry !== "Thumbs.db",
+			);
+			if (meaningfulEntries.length > 0) {
+				return {
+					ok: false,
+					reason: `El directorio "${name}" ya existe y no está vacío`,
+				};
+			}
+		} catch {
+			return { ok: false, reason: `No se puede leer el directorio "${name}"` };
+		}
+	}
+
+	// Verificar permisos de escritura en el directorio padre
+	const parentDir = dirname(resolve(name));
+	try {
+		accessSync(parentDir, constants.W_OK);
+	} catch {
+		return { ok: false, reason: `Sin permisos de escritura en "${parentDir}"` };
 	}
 
 	return { ok: true };
@@ -66,25 +102,117 @@ function logStep(emoji: string, message: string): void {
  * Ejecuta un comando en un directorio. Hereda stdout/stderr del proceso padre
  * para que el output de npm/git sea visible.
  */
-function execInDir(cmd: string, args: string[], cwd: string): Promise<void> {
+export function execInDir(
+	cmd: string,
+	args: string[],
+	cwd: string,
+): Promise<void> {
 	return new Promise((resolveP, rejectP) => {
 		const proc = spawn(cmd, args, { cwd, stdio: "inherit" });
 		proc.on("error", rejectP);
 		proc.on("exit", (code) => {
 			if (code === 0) resolveP();
-			else rejectP(new Error(`${cmd} ${args.join(" ")} exited with code ${code}`));
+			else
+				rejectP(new Error(`${cmd} ${args.join(" ")} exited with code ${code}`));
 		});
 	});
 }
 
+/**
+ * Ejecuta un comando y captura su stdout. Útil para leer valores de git config.
+ */
+export function execCapture(
+	cmd: string,
+	args: string[],
+	cwd: string,
+): Promise<string> {
+	return new Promise((resolveP, rejectP) => {
+		const proc = spawn(cmd, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+		let stdout = "";
+		proc.stdout.on("data", (data: Buffer) => {
+			stdout += data.toString();
+		});
+		proc.on("error", rejectP);
+		proc.on("exit", (code) => {
+			if (code === 0) resolveP(stdout.trim());
+			else
+				rejectP(new Error(`${cmd} ${args.join(" ")} exited with code ${code}`));
+		});
+	});
+}
+
+/**
+ * Verifica si git está disponible en el sistema.
+ */
+export async function isGitAvailable(): Promise<boolean> {
+	try {
+		await execCapture("git", ["--version"], process.cwd());
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Lee un valor de la configuración global de git.
+ * Retorna null si no está configurado o si git no está disponible.
+ */
+export async function getGitConfig(
+	key: string,
+	cwd: string,
+): Promise<string | null> {
+	try {
+		const value = await execCapture("git", ["config", "--global", key], cwd);
+		return value || null;
+	} catch {
+		return null;
+	}
+}
+
 async function runGitInit(projectDir: string): Promise<void> {
+	// 1. Verificar que git está disponible
+	if (!(await isGitAvailable())) {
+		logStep("⚠️", "Git no encontrado. Saltando inicialización git.");
+		logStep("💡", `Instalá Git y corré ${pc.cyan("git init")} manualmente.`);
+		return;
+	}
+
 	await execInDir("git", ["init", "-b", "main"], projectDir);
 	await execInDir("git", ["add", "."], projectDir);
-	await execInDir(
-		"git",
-		["commit", "-m", "chore: initial commit from create-stack-next"],
-		projectDir,
-	);
+
+	// 2. Verificar user.name/user.email
+	const userName = await getGitConfig("user.name", projectDir);
+	const userEmail = await getGitConfig("user.email", projectDir);
+
+	if (!userName || !userEmail) {
+		logStep(
+			"⚠️",
+			"Git user.name/user.email no configurados. Usando valores temporales.",
+		);
+		await execInDir(
+			"git",
+			[
+				"-c",
+				"user.name=create-stack-next",
+				"-c",
+				"user.email=noreply@create-stack-next",
+				"commit",
+				"-m",
+				"chore: initial commit from create-stack-next",
+			],
+			projectDir,
+		);
+		logStep(
+			"💡",
+			`Configurá tu Git: ${pc.cyan('git config --global user.name "Tu Nombre"')}`,
+		);
+	} else {
+		await execInDir(
+			"git",
+			["commit", "-m", "chore: initial commit from create-stack-next"],
+			projectDir,
+		);
+	}
 }
 
 async function runInstall(projectDir: string, pm: string): Promise<void> {
@@ -108,7 +236,9 @@ export async function run(): Promise<void> {
 	const projectName = args._[0];
 	if (!projectName) {
 		console.error(pc.red("❌"), "Falta el nombre del proyecto.");
-		console.error(`   Uso: ${pc.cyan("npx create-stack-next")} ${pc.green("<nombre>")}`);
+		console.error(
+			`   Uso: ${pc.cyan("npx create-stack-next")} ${pc.green("<nombre>")}`,
+		);
 		process.exit(1);
 	}
 
@@ -143,7 +273,11 @@ export async function run(): Promise<void> {
 		const packageJsonRaw = await readFile(packageJsonPath, "utf-8");
 		const packageJson = JSON.parse(packageJsonRaw);
 		packageJson.name = projectName;
-		await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`, "utf-8");
+		await writeFile(
+			packageJsonPath,
+			`${JSON.stringify(packageJson, null, 2)}\n`,
+			"utf-8",
+		);
 		logStep("📝", "package.json personalizado");
 
 		// 4. Instalar deps
@@ -153,8 +287,15 @@ export async function run(): Promise<void> {
 				await runInstall(projectDir, pm);
 				logStep("✅", "Dependencias instaladas");
 			} catch (err) {
-				logStep("⚠️", `Falló la instalación (${pm}). Corré ${pc.cyan(`${pm} install`)} manualmente.`);
-				console.error(pc.dim(`   Error: ${err instanceof Error ? err.message : String(err)}`));
+				logStep(
+					"⚠️",
+					`Falló la instalación (${pm}). Corré ${pc.cyan(`${pm} install`)} manualmente.`,
+				);
+				console.error(
+					pc.dim(
+						`   Error: ${err instanceof Error ? err.message : String(err)}`,
+					),
+				);
 			}
 		}
 
@@ -166,7 +307,11 @@ export async function run(): Promise<void> {
 				logStep("✅", "Repo git inicializado + commit inicial");
 			} catch (err) {
 				logStep("⚠️", "Falló git init. Inicializalo manualmente.");
-				console.error(pc.dim(`   Error: ${err instanceof Error ? err.message : String(err)}`));
+				console.error(
+					pc.dim(
+						`   Error: ${err instanceof Error ? err.message : String(err)}`,
+					),
+				);
 			}
 		}
 
@@ -176,10 +321,12 @@ export async function run(): Promise<void> {
 		console.log();
 		console.log(pc.bold("Próximos pasos:"));
 		console.log(`  ${pc.cyan("cd")} ${pc.green(projectName)}`);
-		console.log(`  ${pc.cyan("npm run dev")}          # arrancar dev server`);
-		console.log(`  ${pc.cyan("npm run test")}         # correr tests unitarios`);
-		console.log(`  ${pc.cyan("npm run test:e2e")}     # correr tests e2e`);
-		console.log(`  ${pc.cyan("npm run lint")}         # correr Biome`);
+		console.log(`  ${pc.cyan(`${pm} run dev`)}          # arrancar dev server`);
+		console.log(
+			`  ${pc.cyan(`${pm} run test`)}         # correr tests unitarios`,
+		);
+		console.log(`  ${pc.cyan(`${pm} run test:e2e`)}     # correr tests e2e`);
+		console.log(`  ${pc.cyan(`${pm} run lint`)}         # correr Biome`);
 		console.log();
 	} catch (err) {
 		console.error();

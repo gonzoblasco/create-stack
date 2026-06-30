@@ -9,6 +9,23 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-30
+
+### Added
+- `AGENT_TASKS.md` — guía de proceso para agentes de IA (Fase 1 del roadmap)
+- `src/test/git.test.ts` — tests dedicados para funciones de Git (`isGitAvailable`, `getGitConfig`, `execCapture`)
+- Tests exhaustivos en `cli.test.ts`: 27 tests (antes 13) cubriendo `validateProjectName` directo, edge cases de FS, combinaciones de flags
+- Tests exhaustivos en `copy-template.test.ts`: 11 tests (antes 2) cubriendo estructura completa de archivos, dotfiles, paths anidados, archivos sin placeholders
+- ADRs D002, D003, D004 en `docs/decisions.md`
+
+### Changed
+- `cli.ts` refactorizado: funciones `validateProjectName`, `execInDir`, `execCapture`, `isGitAvailable`, `getGitConfig` ahora son exportadas para testabilidad directa
+- `validateProjectName` ahora acepta directorios existentes vacíos (antes rechazaba cualquier directorio existente)
+- `validateProjectName` valida permisos de escritura en el directorio padre
+- `runGitInit` ahora detecta si Git está instalado y muestra warning amigable si no
+- `runGitInit` usa valores genéricos para el commit inicial cuando `user.name`/`user.email` no están configurados
+- Output de "Próximos pasos" ahora muestra el package manager seleccionado (antes siempre mostraba `npm`)
+
 ## [0.3.1] - 2026-06-29
 
 ### Added
@@ -64,7 +81,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Publicación en npm
 - Repo público en GitHub
 
-[Unreleased]: https://github.com/gonzoblasco/create-stack-next/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/gonzoblasco/create-stack-next/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.3.1...v0.5.0
 [0.3.1]: https://github.com/gonzoblasco/create-stack-next/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.1.0...v0.2.0

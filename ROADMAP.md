@@ -27,9 +27,9 @@ Para alcanzar esto, dividiremos el trabajo en las siguientes tres fases:
 ### ✨ Fase 2: Flexibilidad Interna y DX (v0.6.x - v0.8.x)
 *El objetivo es refinar la Experiencia del Desarrollador (DX) al usar el comando y dar soporte a estructuras más complejas.*
 
-- [ ] **Soporte Oficial para Workspaces:** Detección automática y configuración sin fricción si el CLI se ejecuta dentro de un monorepo (Turborepo, pnpm workspaces, etc.).
-- [ ] **Pulido Visual del CLI:** Mejorar la salida en terminal (spinners atractivos, colores semánticos, mensajes de progreso claros, y un bloque de "Próximos pasos" impecable).
-- [ ] *(Opcional)* **Templates Internos M5:** Introducción del flag `--template api` para generar un proyecto exclusivamente backend sin React.
+- [x] **Soporte Oficial para Workspaces:** Detección automática y configuración sin fricción si el CLI se ejecuta dentro de un monorepo (Turborepo, pnpm workspaces, etc.).
+- [x] **Pulido Visual del CLI:** Mejorar la salida en terminal (spinners atractivos, colores semánticos, mensajes de progreso claros, y un bloque de "Próximos pasos" impecable).
+- [x] *(Opcional)* **Templates Internos M5:** Introducción del flag `--template api` para generar un proyecto exclusivamente backend sin React.
 
 ### 📚 Fase 3: Adopción y Documentación (v0.9.x)
 *El objetivo es preparar el proyecto para el mundo exterior y escalar su uso.*

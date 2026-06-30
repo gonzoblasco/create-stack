@@ -10,6 +10,11 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 ## [Unreleased]
 
 ### Added
+- **`template-api/` Boilerplate**: Se implementó una arquitectura robusta de backend puro usando Next.js App Router.
+  - **Base de Datos**: Integración de Drizzle ORM + `@libsql/client` (SQLite) con tabla de usuarios y `drizzle.config.ts`.
+  - **Manejo de Errores y Respuestas**: Utils estandarizadas (`src/lib/errors.ts` y `src/lib/api-response.ts`) para respuestas de API consistentes.
+  - **Middleware**: Interceptor de autenticación base vía Bearer Token en `src/middleware.ts`.
+  - **Testing**: Integración con `node-mocks-http` y Vitest para pruebas de Route Handlers ultra veloces sin levantar servidores.
 - **AI Workflow Injection**: Todos los proyectos generados (`template/` y `template-api/`) ahora incluyen de fábrica archivos semilla para orquestar agentes de IA (`ROADMAP.md`, `AGENT_TASKS.md`, `HANDOFF.md`).
 - **Prompt Kickoff**: Se añadió un prompt pre-configurado en `AGENTS.md` del template para que el usuario inicie de inmediato la Fase 1 del proyecto usando cualquier LLM (Cursor, OpenClaw, etc).
 - Decisiones técnicas fundacionales (ADR D004 y D005) inyectadas en los templates generados para prevenir amnesia contextual en la IA.

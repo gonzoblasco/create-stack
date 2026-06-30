@@ -70,16 +70,20 @@ El proyecto incluye:
 ### M0 — Definición ✅
 ### M1 — MVP ✅
 ### M2 — AI-native ✅
-### M3 — Familia de scaffolders ⏸️ Pausado
-
-Ver [`FUTURE.md`](FUTURE.md) para el registro de ideas futuras (`create-stack-remix`, `create-stack-astro`, etc.).
-
-### M4 — Adopción (Lite) ⏳ En progreso
+### M3 — Adopción (Lite) ⏳ En progreso
 
 - [ ] README pulido
 - [ ] Video demo (2-4 min)
 - [ ] Release note
 - [ ] Presencia básica
+
+### M4 — Estabilización y v1.0.0 🎯 Próximo
+
+- Documentación de decisiones (ADRs) persistente.
+- Testing exhaustivo del Scaffolder y manejo de Edge Cases.
+- Refinamiento de la Developer Experience (DX).
+
+Ver [`FUTURE.md`](FUTURE.md) para el registro de ideas futuras.
 
 ---
 

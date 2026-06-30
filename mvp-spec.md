@@ -2,12 +2,13 @@
 
 > Documento de brief para sub-agentes y colaboradores. Define el alcance mínimo viable del scaffolder. Si algo no está acá, no es parte del MVP.
 
-**Estado:** ✅ M1 cerrado y publicado. M2 en implementación.
-**Fecha:** 2026-06-28
-**Versión publicada:** `0.1.0` — https://www.npmjs.com/package/create-stack-next
+**Estado:** ✅ v0.3.0 publicada. M0-M2 + M4 Lite cerrados. M3 pausado.
+**Fecha:** 2026-06-28 (M0/M1), actualizado 2026-06-29 (estado de versión).
+**Versión publicada:** `0.3.0` — https://www.npmjs.com/package/create-stack-next
 **M0 cerrado:** ✅ producto, scope, distribución, framework, linter, testing, nombre.
 **M1 cerrado:** ✅ scaffolder funcional + template completo + repo público + npm publish.
-**M2 (AI-native):** ⏳ en implementación — ver D018 en `context/decisions.md`.
+**M2 cerrado (2026-06-28):** ✅ AI-native (`npm run agent`, templates de prompts, `.openclaw/`).
+**M4 Lite cerrado:** ✅ README pulido, CHANGELOG, release notes, post LinkedIn.
 
 ---
 
@@ -248,7 +249,6 @@ Lo que **NO** se incluye en la primera versión:
 - ❌ Auth (NextAuth, Clerk, etc.)
 - ❌ Database (Postgres, SQLite, etc.)
 - ❌ Storybook
-- ❌ Multi-template (Remix, Astro, etc. — eso es `create-stack-remix`, otro proyecto)
 - ❌ Prompts interactivos (D011: opinionated 100%)
 - ❌ Firefox/WebKit en Playwright (solo Chromium)
 - ❌ Docker
@@ -294,7 +294,6 @@ El MVP está listo cuando **todas** estas son verdaderas:
 ## 11. Roadmap post-MVP (referencia, no es parte del MVP)
 
 - **M2 — AI-native:** comando `npm run agent`, templates de prompts por tipo de tarea, integración profunda con OpenClaw.
-- **M3 — Familia:** `create-stack-remix`, `create-stack-astro`, `create-stack-sveltekit` como paquetes hermanos.
 - **M4 — Adoption:** docs site, video demo, blog post, presencia en awesome lists.
 - **M5 — Templates adicionales dentro del mismo scaffolder:** `--template api`, `--template cli`, etc. (Revierte D006/D011 parcialmente si la demanda lo justifica.)
 
@@ -317,4 +316,3 @@ Esto NO es parte del MVP. Es el siguiente paso del usuario, no nuestro.
 **Próximo paso:**
 1. Implementar M2 (D018): `npm run agent` + templates de prompts + `.openclaw/` específico.
 2. Tests del scaffolder mismo (paralelo, no bloqueante).
-3. Cerrar M3 cuando haya demanda: familia `create-stack-remix`, `create-stack-astro`, `create-stack-sveltekit`.

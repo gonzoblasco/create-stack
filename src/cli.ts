@@ -3,15 +3,20 @@ import { constants, accessSync, existsSync, readdirSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { copyTemplate } from "./copy-template.js";
 import { type Args, parseArgs } from "./parse-args.js";
+import { isInsideWorkspace } from "./workspace.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // En dist/ queda en dist/index.js, así que subimos un nivel
-const TEMPLATE_DIR = resolve(__dirname, "..", "template");
+function getTemplateDir(templateType = "app"): string {
+	const folderName = templateType === "api" ? "template-api" : "template";
+	return resolve(__dirname, "..", folderName);
+}
 
 function printUsage(): void {
 	console.log(`
@@ -172,8 +177,8 @@ export async function getGitConfig(
 async function runGitInit(projectDir: string): Promise<void> {
 	// 1. Verificar que git está disponible
 	if (!(await isGitAvailable())) {
-		logStep("⚠️", "Git no encontrado. Saltando inicialización git.");
-		logStep("💡", `Instalá Git y corré ${pc.cyan("git init")} manualmente.`);
+		p.log.warn("Git no encontrado. Saltando inicialización git.");
+		p.log.info(`Instalá Git y corré ${pc.cyan("git init")} manualmente.`);
 		return;
 	}
 
@@ -185,8 +190,7 @@ async function runGitInit(projectDir: string): Promise<void> {
 	const userEmail = await getGitConfig("user.email", projectDir);
 
 	if (!userName || !userEmail) {
-		logStep(
-			"⚠️",
+		p.log.warn(
 			"Git user.name/user.email no configurados. Usando valores temporales.",
 		);
 		await execInDir(
@@ -202,8 +206,7 @@ async function runGitInit(projectDir: string): Promise<void> {
 			],
 			projectDir,
 		);
-		logStep(
-			"💡",
+		p.log.info(
 			`Configurá tu Git: ${pc.cyan('git config --global user.name "Tu Nombre"')}`,
 		);
 	} else {
@@ -254,20 +257,24 @@ export async function run(): Promise<void> {
 	const git = args.git !== false;
 	const install = args.install !== false;
 
-	console.log();
-	console.log(pc.cyan(pc.bold(`Creando proyecto en ./${projectName}...`)));
-	console.log();
+	p.intro(pc.bgCyan(pc.black(" create-stack-next ")));
 
 	try {
+		const s = p.spinner();
+
 		// 1. Crear directorio destino
+		s.start(`Creando directorio en ./${projectName}`);
 		await mkdir(projectDir, { recursive: true });
-		logStep("📁", "Directorio creado");
+		s.stop(`Directorio creado: ${pc.cyan(projectName)}`);
 
 		// 2. Copiar template
-		await copyTemplate(TEMPLATE_DIR, projectDir, { projectName, pm });
-		logStep("📋", "Template copiado");
+		s.start("Copiando template");
+		const templateDir = getTemplateDir(args.template);
+		await copyTemplate(templateDir, projectDir, { projectName, pm });
+		s.stop("Template copiado exitosamente");
 
 		// 3. Personalizar package.json con el nombre correcto del proyecto
+		s.start("Configurando proyecto");
 		const packageJsonPath = join(projectDir, "package.json");
 		const { readFile } = await import("node:fs/promises");
 		const packageJsonRaw = await readFile(packageJsonPath, "utf-8");
@@ -278,60 +285,58 @@ export async function run(): Promise<void> {
 			`${JSON.stringify(packageJson, null, 2)}\n`,
 			"utf-8",
 		);
-		logStep("📝", "package.json personalizado");
+		s.stop("Configuración lista");
 
 		// 4. Instalar deps
 		if (install) {
-			logStep("📦", `Instalando dependencias (${pm})...`);
+			s.start(`Instalando dependencias via ${pm}`);
 			try {
 				await runInstall(projectDir, pm);
-				logStep("✅", "Dependencias instaladas");
+				s.stop("Dependencias instaladas");
 			} catch (err) {
-				logStep(
-					"⚠️",
-					`Falló la instalación (${pm}). Corré ${pc.cyan(`${pm} install`)} manualmente.`,
-				);
-				console.error(
-					pc.dim(
-						`   Error: ${err instanceof Error ? err.message : String(err)}`,
-					),
+				s.stop(`Falló la instalación con ${pm}`);
+				p.note(
+					`Ocurrió un error. Podés correr ${pc.cyan(`${pm} install`)} manualmente.\n${err instanceof Error ? err.message : String(err)}`,
+					"Advertencia",
 				);
 			}
 		}
 
 		// 5. Git init
 		if (git) {
-			logStep("🔧", "Inicializando git...");
-			try {
-				await runGitInit(projectDir);
-				logStep("✅", "Repo git inicializado + commit inicial");
-			} catch (err) {
-				logStep("⚠️", "Falló git init. Inicializalo manualmente.");
-				console.error(
-					pc.dim(
-						`   Error: ${err instanceof Error ? err.message : String(err)}`,
-					),
-				);
+			const inWorkspace = await isInsideWorkspace(process.cwd());
+			if (inWorkspace) {
+				p.log.info("Workspace detectado. Saltando inicialización de Git...");
+			} else {
+				s.start("Inicializando repositorio Git");
+				try {
+					await runGitInit(projectDir);
+					s.stop("Repositorio Git inicializado");
+				} catch (err) {
+					s.stop("Falló la inicialización de Git");
+					p.note(
+						`Podés correr git init manualmente.\n${err instanceof Error ? err.message : String(err)}`,
+						"Advertencia",
+					);
+				}
 			}
 		}
 
 		// 6. Mensaje final
-		console.log();
-		console.log(pc.green(pc.bold("✅ Proyecto creado.")));
-		console.log();
-		console.log(pc.bold("Próximos pasos:"));
-		console.log(`  ${pc.cyan("cd")} ${pc.green(projectName)}`);
-		console.log(`  ${pc.cyan(`${pm} run dev`)}          # arrancar dev server`);
-		console.log(
-			`  ${pc.cyan(`${pm} run test`)}         # correr tests unitarios`,
-		);
-		console.log(`  ${pc.cyan(`${pm} run test:e2e`)}     # correr tests e2e`);
-		console.log(`  ${pc.cyan(`${pm} run lint`)}         # correr Biome`);
-		console.log();
+		const nextSteps = [
+			`cd ${projectName}`,
+			`${pm} run dev          ${pc.dim("# Arrancar servidor de desarrollo")}`,
+			`${pm} run test         ${pc.dim("# Correr tests unitarios")}`,
+			`${pm} run test:e2e     ${pc.dim("# Correr tests e2e")}`,
+			`${pm} run lint         ${pc.dim("# Ejecutar Biome (linter + format)")}`,
+		];
+
+		p.note(nextSteps.join("\n"), "Próximos pasos");
+
+		p.outro(pc.green(pc.bold("¡Todo listo! Happy coding! 🚀")));
 	} catch (err) {
-		console.error();
-		console.error(pc.red("❌ Error durante la creación del proyecto:"));
-		console.error(err instanceof Error ? err.message : String(err));
+		p.cancel("Operación cancelada por un error.");
+		console.error(pc.red(err instanceof Error ? err.message : String(err)));
 		process.exit(1);
 	}
 }

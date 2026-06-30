@@ -12,6 +12,8 @@ export type Args = {
 	install?: boolean;
 	/** Package manager: npm | pnpm | yarn | bun (default: npm) */
 	pm?: string;
+	/** Template to use: app | api (default: app) */
+	template?: string;
 };
 
 const VALID_PMS = ["npm", "pnpm", "yarn", "bun"] as const;
@@ -19,6 +21,13 @@ type ValidPM = (typeof VALID_PMS)[number];
 
 function isValidPM(value: string): value is ValidPM {
 	return (VALID_PMS as readonly string[]).includes(value);
+}
+
+const VALID_TEMPLATES = ["app", "api"] as const;
+type ValidTemplate = (typeof VALID_TEMPLATES)[number];
+
+function isValidTemplate(value: string): value is ValidTemplate {
+	return (VALID_TEMPLATES as readonly string[]).includes(value);
 }
 
 export function parseArgs(argv: string[]): Args {
@@ -47,6 +56,20 @@ export function parseArgs(argv: string[]): Args {
 					);
 				}
 				args.pm = next;
+				i++;
+				break;
+			}
+			case "--template": {
+				const next = argv[i + 1];
+				if (!next) {
+					throw new Error("--template requiere un valor (app, api)");
+				}
+				if (!isValidTemplate(next)) {
+					throw new Error(
+						`--template inválido: "${next}". Valores válidos: ${VALID_TEMPLATES.join(", ")}`,
+					);
+				}
+				args.template = next;
 				i++;
 				break;
 			}

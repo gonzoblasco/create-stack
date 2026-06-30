@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  test:
+    name: Test Generation with ${{ matrix.pm }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pm: [npm, pnpm, yarn, bun]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        if: matrix.pm == 'pnpm'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup bun
+        if: matrix.pm == 'bun'
+        uses: oven-sh/setup-bun@v1
+
+      # Core checks on all matrices (since it's cheap)
+      - name: Install CLI dependencies
+        run: npm ci
+
+      - name: Run Biome Lint
+        run: npm run lint
+
+      - name: Run Typecheck
+        run: npm run typecheck
+
+      - name: Run Unit Tests
+        run: npm run test:run
+
+      - name: Build CLI
+        run: npm run build
+
+      - name: Test Project Generation (${{ matrix.pm }})
+        run: |
+          mkdir -p /tmp/test-gen
+          cd /tmp/test-gen
+          node $GITHUB_WORKSPACE/dist/index.js test-app --pm ${{ matrix.pm }} --no-git
+          cd test-app
+          
+          # Verificar que instaló dependencias (node_modules existe)
+          if [ ! -d "node_modules" ]; then
+            echo "❌ node_modules no fue creado por ${{ matrix.pm }}"
+            exit 1
+          fi
+          
+          echo "✅ Generación e instalación exitosa con ${{ matrix.pm }}"

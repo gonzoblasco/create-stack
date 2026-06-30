@@ -34,3 +34,11 @@
 **Decisión:** Si el directorio destino ya existe pero está vacío (o solo contiene archivos del sistema como `.DS_Store`), se acepta y se continúa con la generación. Solo se rechaza si el directorio contiene archivos significativos.
 **Justificación:** Es común que usuarios creen un directorio vacío antes de ejecutar el scaffolder (por ejemplo, `mkdir my-app && cd my-app && npx create-stack-next my-app`). Rechazar directorios vacíos penaliza este workflow legítimo sin beneficio. Se filtran `.DS_Store` y `Thumbs.db` porque son archivos del sistema operativo que no representan contenido del usuario.
 
+---
+
+## D005 — Ciclo de vida de AGENT_TASKS.md por fases
+
+**Fecha:** 2026-06-30
+**Decisión:** El archivo `AGENT_TASKS.md` en la raíz del proyecto funcionará como el "Sprint Plan" exclusivo de la fase de desarrollo actual. Al cambiar de fase, el archivo actual se archivará en `docs/phases/phaseX_tasks.md` y se creará uno nuevo en la raíz.
+**Justificación:** Mantiene la raíz del proyecto y el contexto del agente enfocados únicamente en lo que es relevante *ahora*. A su vez, preservar el historial en `docs/phases/` permite la trazabilidad completa del proyecto sin ensuciar el working tree de las sesiones activas.
+

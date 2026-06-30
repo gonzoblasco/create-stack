@@ -60,6 +60,23 @@ describe("parseArgs", () => {
 		);
 	});
 
+	it("parsea --template api correctamente", () => {
+		const args = parseArgs(["my-app", "--template", "api"]);
+		expect(args.template).toBe("api");
+	});
+
+	it("lanza error si --template tiene un valor inválido", () => {
+		expect(() => parseArgs(["my-app", "--template", "invalid"])).toThrow(
+			/--template inválido/,
+		);
+	});
+
+	it("lanza error si --template no tiene valor", () => {
+		expect(() => parseArgs(["my-app", "--template"])).toThrow(
+			/--template requiere un valor/,
+		);
+	});
+
 	it("lanza error si --pm no tiene valor", () => {
 		expect(() => parseArgs(["my-app", "--pm"])).toThrow(
 			/--pm requiere un valor/,

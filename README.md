@@ -67,21 +67,11 @@ El proyecto incluye:
 
 ## Roadmap
 
-### M0 — Definición ✅
-### M1 — MVP ✅
-### M2 — AI-native ✅
-### M3 — Adopción (Lite) ⏳ En progreso
+El proyecto se encuentra en desarrollo activo hacia la versión estable (v1.0.0). Podés ver el detalle completo y estado actual en [`ROADMAP.md`](ROADMAP.md).
 
-- [ ] README pulido
-- [ ] Video demo (2-4 min)
-- [ ] Release note
-- [ ] Presencia básica
-
-### M4 — Estabilización y v1.0.0 🎯 Próximo
-
-- Documentación de decisiones (ADRs) persistente.
-- Testing exhaustivo del Scaffolder y manejo de Edge Cases.
-- Refinamiento de la Developer Experience (DX).
+- **Fase 1: Robustez Absoluta** ✅ (Completada en v0.5.0)
+- **Fase 2: Flexibilidad Interna y DX** ⏳ En progreso
+- **Fase 3: Adopción y Documentación** 🎯 Próximo
 
 Ver [`FUTURE.md`](FUTURE.md) para el registro de ideas futuras.
 

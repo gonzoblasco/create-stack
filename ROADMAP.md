@@ -4,12 +4,20 @@ Este documento detalla el plan de acción estratégico para llevar `create-stack
 
 ---
 
-## 📍 Estado Actual (v0.6.1)
+## 📍 Estado Actual (v0.7.0)
 - ✅ **Fase 1 (Robustez Absoluta):** CLI testeado, validación de nombres, edge cases de FS y flujo Git robustos.
 - ✅ **Fase 2 (Flexibilidad Interna y DX):** Workspaces, pulido visual con `@clack/prompts`, y template `--template api` finalizados.
-- ⏳ **Fase 3 (Adopción y Documentación):** En progreso.
+- ✅ **Fase 3 (Adopción y Documentación):** Spec-Driven Development integrado. En progreso.
 
-### Novedades destacadas de v0.6.1
+### Novedades destacadas de v0.7.0
+- 📋 **Spec-Driven Development integrado:** todos los proyectos generados incluyen [OpenSpec](https://github.com/Fission-AI/OpenSpec) pre-configurado. El scaffolder pregunta qué herramientas de IA usás e instala los skills y slash commands correspondientes.
+  - Flujo `/opsx:propose` → `/opsx:apply` → `/opsx:archive` listo para usar desde el día 1.
+  - Estructura `openspec/` pre-armada como fallback si `openspec init` falla.
+  - `@fission-ai/openspec` como `devDependency` en los proyectos generados.
+- 🛠️ **Nuevo flag `--no-openspec`:** para saltear la inicialización de OpenSpec.
+- ✅ **64 tests automáticos** corriendo con `npm run test:run`.
+
+### Novedades destacadas de v0.6.x
 - 🤖 **AI-Native desde el minuto cero:** todos los proyectos generados incluyen `AGENTS.md`, `ROADMAP.md`, `AGENT_TASKS.md`, `HANDOFF.md` y ADRs semilla en `docs/decisions.md`.
 - ⚡ **Template API (`--template api`):** backend puro con Next.js App Router, Drizzle ORM + SQLite, Zod, utilidades `ApiError` / `successResponse`, middleware Bearer/API Key, y tests en memoria con `node-mocks-http` + Vitest.
 - 🎨 **DX renovada:** `@clack/prompts` con spinners en tiempo real, colores semánticos, cancelaciones limpias (Ctrl+C) y bloque estilizado de "Próximos pasos".

@@ -18,6 +18,11 @@ const AI_TOOLS = [
 	{ value: "github-copilot", label: "GitHub Copilot", hint: ".github/" },
 	{ value: "cline", label: "Cline", hint: ".cline/" },
 	{ value: "codex", label: "Codex", hint: ".codex/" },
+	{
+		value: "all",
+		label: "Todas las herramientas (30+)",
+		hint: "Antigravity, OpenClaw, Gemini, etc.",
+	},
 ] as const;
 
 /** Valores pre-seleccionados por defecto. */
@@ -350,9 +355,11 @@ export async function run(): Promise<void> {
 
 		// 6. OpenSpec init (Spec-Driven Development)
 		if (openspec && selectedTools.length > 0) {
+			// Si el usuario seleccionó "all", ignorar las demás y pasar solo "all"
+			const toolsFlag = selectedTools.includes("all") ? ["all"] : selectedTools;
 			s.start("Configurando OpenSpec (Spec-Driven Development)");
 			try {
-				await runOpenSpecInit(projectDir, selectedTools);
+				await runOpenSpecInit(projectDir, toolsFlag);
 				s.stop("OpenSpec configurado correctamente");
 			} catch (err) {
 				s.stop(

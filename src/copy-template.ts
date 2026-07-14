@@ -27,6 +27,7 @@ export async function copyTemplate(
 	// 2. Copiar recursivamente. cp con recursive: true hace el trabajo pesado.
 	await cp(templateDir, targetDir, {
 		recursive: true,
+		dotfiles: true,
 		// Filtro: por ahora copiamos todo. Más adelante podemos excluir cosas.
 		filter: (_src: string) => true,
 	});

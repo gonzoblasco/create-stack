@@ -13,6 +13,12 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 - Actualización de `ROADMAP.md`, `HANDOFF.md`, `AGENT_TASKS.md` y `FUTURE.md` para reflejar el estado actual del proyecto tras el cierre de la Fase 2.
 
+## [0.6.2] - 2026-07-14
+
+### Fixed
+
+- `copy-template.ts`: agregado `dotfiles: true` al `cp()` para que el scaffolding copie archivos ocultos del template (`.env.example`, `.gitignore`, etc.). Sin este flag, los dotfiles del template se ignoraban silenciosamente al generar un proyecto nuevo.
+
 ## [0.6.1] - 2026-07-01
 
 ### Added
@@ -129,7 +135,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Publicación en npm.
 - Repo público en GitHub.
 
-[Unreleased]: https://github.com/gonzoblasco/create-stack-next/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/gonzoblasco/create-stack-next/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/gonzoblasco/create-stack-next/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/gonzoblasco/create-stack-next/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.3.1...v0.5.0

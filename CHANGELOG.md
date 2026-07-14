@@ -13,6 +13,17 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 - Actualización de `ROADMAP.md`, `HANDOFF.md`, `AGENT_TASKS.md` y `FUTURE.md` para reflejar el estado actual del proyecto tras el cierre de la Fase 2.
 
+## [0.7.1] - 2026-07-14
+
+### Added
+
+- Opción "Todas las herramientas (30+)" en el select de IA: si el usuario usa herramientas menos comunes (Antigravity, OpenClaw, Gemini, etc.) puede seleccionar "Todas" y se pasa `--tools all` a `openspec init`.
+
+### Changed
+
+- Removido "Primera utilidad publicada. M4 Lite en progreso." del README.
+- ROADMAP reescrito: lista de logros actuales en vez de fases rígidas.
+
 ## [0.7.0] - 2026-07-14
 
 ### Added
@@ -153,7 +164,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Publicación en npm.
 - Repo público en GitHub.
 
-[Unreleased]: https://github.com/gonzoblasco/create-stack-next/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/gonzoblasco/create-stack-next/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/gonzoblasco/create-stack-next/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/gonzoblasco/create-stack-next/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/gonzoblasco/create-stack-next/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/gonzoblasco/create-stack-next/compare/v0.6.0...v0.6.1

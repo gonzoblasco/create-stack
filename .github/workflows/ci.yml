@@ -53,7 +53,7 @@ jobs:
         run: |
           mkdir -p /tmp/test-gen
           cd /tmp/test-gen
-          node $GITHUB_WORKSPACE/dist/index.js test-app --pm ${{ matrix.pm }} --no-git
+          node $GITHUB_WORKSPACE/dist/index.js test-app --pm ${{ matrix.pm }} --no-git --no-openspec
           cd test-app
           
           # Verificar que instaló dependencias (node_modules existe)

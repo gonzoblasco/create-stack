@@ -306,24 +306,31 @@ export async function run(): Promise<void> {
 		// 4. Seleccionar herramientas IA para OpenSpec (antes de install)
 		let selectedTools: string[] = DEFAULT_TOOLS;
 		if (openspec) {
-			const toolSelection = await p.multiselect({
-				message:
-					"Seleccioná tus herramientas de IA para Spec-Driven Development",
-				options: AI_TOOLS.map((t) => ({
-					value: t.value,
-					label: t.label,
-					hint: t.hint,
-				})),
-				initialValues: DEFAULT_TOOLS,
-				required: false,
-			});
+			// En entornos no interactivos (CI, pipes, etc.), saltar el select y usar defaults
+			if (!process.stdin.isTTY) {
+				p.log.info(
+					`Modo no interactivo detectado. Usando herramientas por defecto: ${DEFAULT_TOOLS.join(", ")}`,
+				);
+			} else {
+				const toolSelection = await p.multiselect({
+					message:
+						"Seleccioná tus herramientas de IA para Spec-Driven Development",
+					options: AI_TOOLS.map((t) => ({
+						value: t.value,
+						label: t.label,
+						hint: t.hint,
+					})),
+					initialValues: DEFAULT_TOOLS,
+					required: false,
+				});
 
-			if (p.isCancel(toolSelection)) {
-				p.cancel("Operación cancelada.");
-				process.exit(1);
+				if (p.isCancel(toolSelection)) {
+					p.cancel("Operación cancelada.");
+					process.exit(1);
+				}
+
+				selectedTools = toolSelection as string[];
 			}
-
-			selectedTools = toolSelection as string[];
 		}
 
 		// 5. Instalar deps

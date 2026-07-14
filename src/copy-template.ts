@@ -30,7 +30,7 @@ export async function copyTemplate(
 		dotfiles: true,
 		// Filtro: por ahora copiamos todo. Más adelante podemos excluir cosas.
 		filter: (_src: string) => true,
-	});
+	} as never);
 
 	// 3. Personalizar archivos que tienen placeholders o valores por defecto.
 	// Hoy solo es package.json (su nombre), pero dejamos la puerta abierta.

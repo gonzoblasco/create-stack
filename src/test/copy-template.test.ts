@@ -73,9 +73,10 @@ describe("copyTemplate", () => {
 		const renames: Record<string, string> = { gitignore: ".gitignore" };
 		for (const file of templateFiles) {
 			const expectedFile = renames[file] ?? file;
-			expect(targetFiles, `Archivo faltante en destino: ${expectedFile}`).toContain(
-				expectedFile,
-			);
+			expect(
+				targetFiles,
+				`Archivo faltante en destino: ${expectedFile}`,
+			).toContain(expectedFile);
 		}
 	});
 

@@ -9,9 +9,32 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Actualización de `ROADMAP.md`, `HANDOFF.md`, `AGENT_TASKS.md` y `FUTURE.md` para reflejar el estado actual del proyecto tras el cierre de la Fase 2.
+- **Templates actualizados para compatibilidad con Biome 2.5+ y TypeScript 5.x/7.x:**
+  - Schema de Biome actualizado de 1.9.0 a 2.5.4
+  - `organizeImports.enabled` → `assist.actions.source.organizeImports.level: "on"`
+  - `linter.rules.recommended: true` → `linter.rules.preset: "recommended"`
+  - `files.ignore` → `files.includes` (formato Biome 2.5+)
+  - Agregado `css.parser.tailwindDirectives: true` para Tailwind v4
+  - Bump de `@biomejs/biome` de `^1.9.0` a `^2.5.0`
+  - Bump de `vitest` de `^2.1.0` a `^4.0.0`
+  - Agregado `src/global.d.ts` con declaraciones de módulos para CSS/imágenes
+  - `@types/react` y `@types/react-dom` actualizados a `^19.0.0` en template-api
+- **Proyecto CSN actualizado a Biome 2.5+ y TypeScript 7+:**
+  - Schema de Biome actualizado
+  - `@biomejs/biome` bump a `^2.5.0`, `typescript` a `^7.0.0`, `vitest` a `^4.0.0`
+  - Agregado `"types": ["node"]` en tsconfig para compatibilidad con TS 7
+
+### Fixed
+
+- Error de schema en biome.json de templates (schema URL desactualizada)
+- Error de `files.ignore` deprecado en Biome 2.5+
+- Error de `organizeImports.enabled` → `level: "on"` en Biome 2.5.4
+- Error de módulo CSS no encontrado en TypeScript (agregado `global.d.ts`)
+- Error de `baseUrl` deprecado en TS 6+ (agregado `ignoreDeprecations: "6.0"` en templates)
+
+---
 
 ## [0.7.1] - 2026-07-14
 

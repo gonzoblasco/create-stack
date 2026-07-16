@@ -1,5 +1,6 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+	"root": false,
+	"$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,13 +8,14 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"ignore": [
-			".next",
-			"node_modules",
-			"dist",
-			"build",
-			"coverage",
-			"playwright-report"
+		"includes": [
+			"**",
+			"!**/.next",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/build",
+			"!**/coverage",
+			"!**/playwright-report"
 		]
 	},
 	"formatter": {
@@ -23,13 +25,10 @@
 		"lineWidth": 100,
 		"lineEnding": "lf"
 	},
-	"organizeImports": {
-		"enabled": true
-	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"suspicious": {
 				"noExplicitAny": "warn"
 			},
@@ -49,6 +48,20 @@
 			"semicolons": "asNeeded",
 			"trailingCommas": "all",
 			"arrowParentheses": "always"
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on"
+				}
+			}
 		}
 	}
 }

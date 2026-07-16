@@ -1,7 +1,36 @@
 # Handover — create-stack-next
 
-**Fecha:** 2026-07-14
-**Última versión:** `0.7.0`
+**Fecha:** 2026-07-15
+**Última versión:** `0.7.1`
+
+---
+
+## Últimos cambios (2026-07-15)
+
+### Templates actualizados para compatibilidad con versiones modernas
+
+Se actualizaron los templates (`template/` y `template-api/`) para resolver los pitfalls encontrados al scaffoldear SoporteML v2:
+
+- **Biome 1.9 → 2.5.4:**
+  - Schema URL actualizada
+  - `organizeImports.enabled` → `assist.actions.source.organizeImports.level: "on"`
+  - `linter.rules.recommended: true` → `linter.rules.preset: "recommended"`
+  - `files.ignore` → `files.includes` (formato Biome 2.5+)
+  - Agregado `css.parser.tailwindDirectives: true` para Tailwind v4
+- **TypeScript:** templates mantienen `^5.6.x` (Next.js 15 no es compatible con TS 7)
+- **Vitest:** bump de `^2.1.0` a `^4.0.0`
+- **Agregado `src/global.d.ts`** con declaraciones de módulos para CSS/imágenes
+- **`@types/react` y `@types/react-dom`** actualizados a `^19.0.0` en template-api
+
+### Proyecto CSN actualizado
+
+- `@biomejs/biome` bump a `^2.5.0`, `typescript` a `^7.0.0`, `vitest` a `^4.0.0`
+- Agregado `"types": ["node"]` en tsconfig para compatibilidad con TS 7
+- Todos los 64 tests pasando ✅
+
+### Nota importante
+
+Los templates usan TypeScript 5.x porque Next.js 15 no es compatible con TS 7 (falla `next build` con `Cannot read properties of undefined (reading 'fileExists')`). El proyecto CSN en sí usa TS 7 sin problemas porque no depende de Next.js.
 
 ---
 

@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "v2-rebrand"]
   pull_request:
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
 
       # Core checks on all matrices (since it's cheap)
       - name: Install CLI dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run Biome Lint
         run: npm run lint
@@ -49,17 +49,30 @@ jobs:
       - name: Build CLI
         run: npm run build
 
-      - name: Test Project Generation (${{ matrix.pm }})
+      - name: Test Project Generation — stack next (${{ matrix.pm }})
         run: |
           mkdir -p /tmp/test-gen
           cd /tmp/test-gen
-          node $GITHUB_WORKSPACE/dist/index.js test-app --pm ${{ matrix.pm }} --no-git --no-openspec
+          node $GITHUB_WORKSPACE/dist/index.js next test-app --pm ${{ matrix.pm }} --no-git --no-openspec
           cd test-app
           
-          # Verificar que instaló dependencias (node_modules existe)
           if [ ! -d "node_modules" ]; then
             echo "❌ node_modules no fue creado por ${{ matrix.pm }}"
             exit 1
           fi
           
-          echo "✅ Generación e instalación exitosa con ${{ matrix.pm }}"
+          echo "✅ Generación e instalación exitosa con ${{ matrix.pm }} (stack next)"
+
+      - name: Test Project Generation — stack api (${{ matrix.pm }})
+        run: |
+          mkdir -p /tmp/test-gen-api
+          cd /tmp/test-gen-api
+          node $GITHUB_WORKSPACE/dist/index.js api test-api --pm ${{ matrix.pm }} --no-git --no-openspec
+          cd test-api
+          
+          if [ ! -d "node_modules" ]; then
+            echo "❌ node_modules no fue creado por ${{ matrix.pm }}"
+            exit 1
+          fi
+          
+          echo "✅ Generación e instalación exitosa con ${{ matrix.pm }} (stack api)"

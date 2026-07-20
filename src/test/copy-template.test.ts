@@ -4,10 +4,10 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { copyTemplate, listFiles } from "../copy-template.js";
 
-describe("copyTemplate", () => {
+describe("copyTemplate — stack next", () => {
 	let tempDir: string;
 	let targetDir: string;
-	const templateDir = join(process.cwd(), "template");
+	const templateDir = join(process.cwd(), "src", "stacks", "next", "template");
 
 	beforeEach(async () => {
 		tempDir = await mkdtemp(join(tmpdir(), "create-stack-test-"));
@@ -17,8 +17,6 @@ describe("copyTemplate", () => {
 	afterEach(async () => {
 		await rm(tempDir, { recursive: true, force: true });
 	});
-
-	// ─── Reemplazo de placeholders ───────────────────────
 
 	it("copia el template y reemplaza el nombre del proyecto en package.json", async () => {
 		await copyTemplate(templateDir, targetDir, {
@@ -57,8 +55,6 @@ describe("copyTemplate", () => {
 		expect(readme).toContain("custom-name");
 	});
 
-	// ─── Estructura completa de archivos ─────────────────
-
 	it("copia todos los archivos del template (verificación exhaustiva)", async () => {
 		await copyTemplate(templateDir, targetDir, {
 			projectName: "my-test-app",
@@ -68,8 +64,6 @@ describe("copyTemplate", () => {
 		const templateFiles = await listFiles(templateDir);
 		const targetFiles = await listFiles(targetDir);
 
-		// Cada archivo del template debe existir en el destino,
-		// con excepción de los dotfiles que se renombran (gitignore → .gitignore)
 		const renames: Record<string, string> = { gitignore: ".gitignore" };
 		for (const file of templateFiles) {
 			const expectedFile = renames[file] ?? file;
@@ -134,7 +128,6 @@ describe("copyTemplate", () => {
 			pm: "npm",
 		});
 
-		// biome.json no debería tener placeholders ni ser modificado
 		const biomeOriginal = await readFile(
 			join(templateDir, "biome.json"),
 			"utf-8",
@@ -163,21 +156,70 @@ describe("copyTemplate", () => {
 	});
 });
 
+describe("copyTemplate — stack api", () => {
+	let tempDir: string;
+	let targetDir: string;
+	const templateDir = join(process.cwd(), "src", "stacks", "api", "template");
+
+	beforeEach(async () => {
+		tempDir = await mkdtemp(join(tmpdir(), "create-stack-api-test-"));
+		targetDir = join(tempDir, "my-test-api");
+	});
+
+	afterEach(async () => {
+		await rm(tempDir, { recursive: true, force: true });
+	});
+
+	it("copia el template API correctamente", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-api",
+			pm: "npm",
+		});
+
+		const packageJsonPath = join(targetDir, "package.json");
+		const raw = await readFile(packageJsonPath, "utf-8");
+		const pkg = JSON.parse(raw);
+
+		expect(pkg.name).toBe("my-test-api");
+	});
+
+	it("copia drizzle.config.ts en template API", async () => {
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-api",
+			pm: "npm",
+		});
+
+		const drizzleConfig = await stat(join(targetDir, "drizzle.config.ts"));
+		expect(drizzleConfig.isFile()).toBe(true);
+	});
+});
+
 // ─── Tests de listFiles helper ───────────────────────────
 
 describe("listFiles", () => {
-	it("devuelve la lista ordenada de archivos del template", async () => {
-		const templateDir = join(process.cwd(), "template");
+	it("devuelve la lista ordenada de archivos del template next", async () => {
+		const templateDir = join(
+			process.cwd(),
+			"src",
+			"stacks",
+			"next",
+			"template",
+		);
 		const files = await listFiles(templateDir);
 
 		expect(files.length).toBeGreaterThan(0);
-		// Verificar que la lista está ordenada
 		const sorted = [...files].sort();
 		expect(files).toEqual(sorted);
 	});
 
 	it("incluye dotfiles en la lista", async () => {
-		const templateDir = join(process.cwd(), "template");
+		const templateDir = join(
+			process.cwd(),
+			"src",
+			"stacks",
+			"next",
+			"template",
+		);
 		const files = await listFiles(templateDir);
 
 		expect(files).toContain("gitignore");

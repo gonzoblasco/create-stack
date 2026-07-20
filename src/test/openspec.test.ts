@@ -5,10 +5,10 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { copyTemplate, listFiles } from "../copy-template.js";
 import { runOpenSpecInit } from "../openspec-init.js";
 
-describe("OpenSpec — estructura en el template", () => {
+describe("OpenSpec — estructura en el template next", () => {
 	let tempDir: string;
 	let targetDir: string;
-	const templateDir = join(process.cwd(), "template");
+	const templateDir = join(process.cwd(), "src", "stacks", "next", "template");
 
 	beforeEach(async () => {
 		tempDir = await mkdtemp(join(tmpdir(), "csn-openspec-test-"));
@@ -87,21 +87,16 @@ describe("runOpenSpecInit", () => {
 	});
 
 	it("falla graceful si no hay proyecto válido", async () => {
-		// Pasamos un directorio inexistente — debería fallar sin crashear
 		await expect(
 			runOpenSpecInit(join(tempDir, "no-existe"), ["claude"]),
 		).rejects.toThrow();
 	});
-
-	// Nota: el test de integración real (correr openspec init en un proyecto
-	// con internet) está en integration.test.ts como test opcional que
-	// requiere conexión.
 });
 
-describe("OpenSpec — template-api", () => {
+describe("OpenSpec — template api", () => {
 	let tempDir: string;
 	let targetDir: string;
-	const templateDir = join(process.cwd(), "template-api");
+	const templateDir = join(process.cwd(), "src", "stacks", "api", "template");
 
 	beforeEach(async () => {
 		tempDir = await mkdtemp(join(tmpdir(), "csn-openspec-api-test-"));
@@ -133,9 +128,15 @@ describe("OpenSpec — template-api", () => {
 	});
 });
 
-describe("OpenSpec — template app", () => {
-	it("template app tiene @fission-ai/openspec en devDependencies", async () => {
-		const templateDir = join(process.cwd(), "template");
+describe("OpenSpec — template app (next)", () => {
+	it("template next tiene @fission-ai/openspec en devDependencies", async () => {
+		const templateDir = join(
+			process.cwd(),
+			"src",
+			"stacks",
+			"next",
+			"template",
+		);
 		const pkg = JSON.parse(
 			await readFile(join(templateDir, "package.json"), "utf-8"),
 		);

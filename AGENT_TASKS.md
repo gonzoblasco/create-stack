@@ -9,8 +9,9 @@ Antes de escribir una sola línea de código, el agente DEBE:
 2. Si la tarea implica una decisión arquitectónica nueva o cambio de diseño, documentarla como ADR en `docs/decisions.md`.
 3. Planificar la implementación paso a paso.
 4. Ejecutar cambios atómicos.
-5. Correr linting (`npm run lint`), typecheck (`npm run typecheck`) y tests (`npm run test:run`).
-6. Actualizar `CHANGELOG.md` en la sección `[Unreleased]` y, si corresponde, `ROADMAP.md`.
+5. Correr `npm run lint:fix` (lint + format automático), `npm run typecheck` y `npm run test:run`.
+6. **Solo si todo pasa**, hacer commit. Si algo falla, arreglarlo antes del commit — no hay commits de fixes.
+7. Actualizar `CHANGELOG.md` en la sección `[Unreleased]` y, si corresponde, `ROADMAP.md`.
 
 ---
 

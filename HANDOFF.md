@@ -53,3 +53,7 @@
 - OpenSpec se ejecuta con `OPENSPEC_TELEMETRY=0`
 - El flag `--template` legacy se mapea: `app → next`, `api → api`
 - Si se pasa `--template` y también un stack posicional, gana `--template`
+
+### Lecciones aprendidas
+
+- **Siempre correr `lint:fix` + `typecheck` + `test:run` antes de commitear.** No hay commits de fixes. Si algo falla, se arregla antes del commit. Esto evita ruido en el historial y CI failures evitables.

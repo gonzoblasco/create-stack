@@ -4,7 +4,7 @@
 // for runtime resolution (__dirname points to dist/).
 
 import { cp, readdir } from "node:fs/promises";
-import { join, resolve, dirname } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

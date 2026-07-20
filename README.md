@@ -1,8 +1,8 @@
-# create-stack-next
+# @gonzoblasco/create-stack
 
-> Scaffolder opinado para Next.js 15. Un solo comando y tenés un proyecto moderno, testeado, lintado y listo para que un AI agent lo habite.
+> Scaffolder opinado multi-stack. Un solo comando y tenés un proyecto moderno, testeado, lintado y listo para que un AI agent lo habite.
 
-[![npm version](https://img.shields.io/npm/v/create-stack-next.svg)](https://www.npmjs.com/package/create-stack-next)
+[![npm version](https://img.shields.io/npm/v/@gonzoblasco/create-stack.svg)](https://www.npmjs.com/package/@gonzoblasco/create-stack)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -10,17 +10,25 @@
 ## Instalación
 
 ```bash
-npx create-stack-next my-app
+# Stack Next.js full (app + API routes + tests + AI agent)
+npx @gonzoblasco/create-stack next my-app
 
-# Si solo necesitás un Backend (API Route Handlers):
-npx create-stack-next my-api --template api
+# Stack Next.js API-only (Drizzle ORM + SQLite + middleware)
+npx @gonzoblasco/create-stack api my-api
 ```
 
-Eso es todo. El comando genera un proyecto Next.js 15 listo para empezar a desarrollar.
+Eso es todo. El comando genera un proyecto listo para empezar a desarrollar.
 
 ---
 
-## Qué incluye
+## Stacks disponibles
+
+| Stack | Descripción |
+|-------|-------------|
+| `next` | Next.js 15 + React 19 + TypeScript estricto + Biome + Vitest + Playwright + Zod + OpenSpec + AI agent config |
+| `api` | Next.js 15 App Router (API-only) + Drizzle ORM + SQLite + middleware Bearer + tests con `node-mocks-http` |
+
+### Stack Next.js Full (`next`)
 
 El proyecto generado viene con todo preconfigurado:
 
@@ -33,7 +41,8 @@ El proyecto generado viene con todo preconfigurado:
 - **AGENTS.md** + workflow de IA inyectado para desarrollo asistido
 - `docs/` con arquitectura, decisiones y guía de contribución
 
-### Template API (`--template api`)
+### Stack API-only (`api`)
+
 Si preferís generar un backend puramente funcional sin React components:
 - **Next.js 15 App Router** (Rutas de API).
 - **Drizzle ORM** + SQLite pre-configurado para base de datos.
@@ -45,8 +54,8 @@ Si preferís generar un backend puramente funcional sin React components:
 
 ## ¿Por qué este y no create-next-app?
 
-| Aspecto | create-next-app | create-stack-next |
-|---------|-----------------|-------------------|
+| Aspecto | create-next-app | @gonzoblasco/create-stack |
+|---------|-----------------|---------------------------|
 | Testing | Ninguno | Vitest + Playwright configurados |
 | Linter | ESLint + Prettier | Biome (un solo binario) |
 | TypeScript | Básico | Estricto + `noUncheckedIndexedAccess` |
@@ -54,16 +63,33 @@ Si preferís generar un backend puramente funcional sin React components:
 | Spec-Driven Development | Ninguno | OpenSpec integrado (specs + slash commands) |
 | CI | Ninguno | GitHub Actions incluido |
 | Filosofía | Mínimo | Opinado con defaults 2026 |
+| Multi-stack | Solo Next.js | `next`, `api`, y más por venir |
 
 **Ideal si:** arrancás proyectos con frecuencia y no querés repetir las mismas 40 decisiones cada vez.
 
 ---
 
-## Casos de uso recomendados
+## Opciones
 
-- Proyectos personales o de equipo donde querés arrancar rápido con buena base
-- Cuando usás (o querés usar) AI agents para desarrollar
-- Cuando valorás tener tests, lint y CI desde el día 1
+```bash
+npx @gonzoblasco/create-stack <stack> [nombre] [opciones]
+
+Opciones:
+  --no-git          No inicializa git ni hace commit inicial
+  --no-install      No corre npm install después de generar
+  --no-openspec     No inicializa OpenSpec (Spec-Driven Development)
+  --pm <nombre>     Package manager: npm, pnpm, yarn, bun (default: npm)
+
+Ejemplos:
+  npx @gonzoblasco/create-stack next my-app
+  npx @gonzoblasco/create-stack api my-api
+  npx @gonzoblasco/create-stack next my-app --pm pnpm --no-git
+```
+
+### Compatibilidad hacia atrás
+
+El formato legacy `npx create-stack-next my-app` sigue funcionando (asume stack `next`).
+El flag `--template api` también funciona, mapeado al stack `api`.
 
 ---
 
@@ -79,7 +105,7 @@ El proyecto incluye:
 
 ### Spec-Driven Development con OpenSpec
 
-Desde la v0.7.0, todos los proyectos generados incluyen [OpenSpec](https://github.com/Fission-AI/OpenSpec) pre-configurado. Esto significa que tu IA trabaja con especificaciones en vez de prompts vagos:
+Todos los proyectos generados incluyen [OpenSpec](https://github.com/Fission-AI/OpenSpec) pre-configurado. Esto significa que tu IA trabaja con especificaciones en vez de prompts vagos:
 
 ```bash
 /opsx:propose "agregar autenticación"   # la IA crea propuesta + specs + tasks
@@ -88,18 +114,6 @@ Desde la v0.7.0, todos los proyectos generados incluyen [OpenSpec](https://githu
 ```
 
 Durante el scaffolding, el CLI te pregunta qué herramientas de IA usás (Claude Code, Cursor, etc.) e instala los skills y slash commands correspondientes.
-
----
-
-## Roadmap
-
-El proyecto se encuentra en desarrollo activo hacia la versión estable (v1.0.0). Podés ver el detalle completo y estado actual en [`ROADMAP.md`](ROADMAP.md).
-
-- **Fase 1: Robustez Absoluta** ✅ (Completada en v0.5.0)
-- **Fase 2: Flexibilidad Interna y DX** ✅ (Completada en v0.6.0)
-- **Fase 3: Adopción y Documentación** ⏳ En progreso
-
-Ver [`FUTURE.md`](FUTURE.md) para el registro de ideas futuras.
 
 ---
 
@@ -118,9 +132,34 @@ npm run agent        # sesión con OpenClaw
 
 ---
 
-## Contribuir
+## Arquitectura del CLI
 
-Si querés contribuir, mirá [`docs/contributing.md`](docs/contributing.md) en el template generado.
+```
+src/
+├── index.ts              # Entrypoint
+├── cli.ts                # Lógica principal del CLI
+├── parse-args.ts         # Parser de argumentos
+├── copy-template.ts      # Copia y personaliza templates
+├── openspec-init.ts      # Inicialización de OpenSpec
+├── workspace.ts          # Detección de workspaces
+└── stacks/
+    ├── types.ts          # Tipos de StackConfig
+    ├── index.ts          # Registry de stacks
+    ├── next/
+    │   ├── index.ts      # Config del stack next
+    │   └── template/     # Template Next.js full
+    └── api/
+        ├── index.ts      # Config del stack api
+        └── template/     # Template Next.js API-only
+```
+
+Cada stack es un módulo independiente. Para agregar uno nuevo, creá `src/stacks/<id>/` con su `index.ts` y `template/`, y registralo en `src/stacks/index.ts`.
+
+---
+
+## Roadmap
+
+Ver [`ROADMAP.md`](ROADMAP.md) y [`FUTURE.md`](FUTURE.md).
 
 ---
 

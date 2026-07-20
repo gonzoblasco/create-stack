@@ -20,7 +20,7 @@ function runCommand(cmd: string, cwd: string): Promise<void> {
 	});
 }
 
-describe("Integration: full project generation", () => {
+describe("Integration: full project generation — stack next", () => {
 	let tempDir: string;
 	let targetDir: string;
 
@@ -34,26 +34,20 @@ describe("Integration: full project generation", () => {
 	});
 
 	it("generates a project that passes lint, typecheck, test and build", async () => {
-		const templateDir = join(process.cwd(), "template");
+		const templateDir = join(process.cwd(), "src", "stacks", "next", "template");
 
 		await copyTemplate(templateDir, targetDir, {
 			projectName: "my-test-app",
 			pm: "npm",
 		});
 
-		// Instalar dependencias
 		await runCommand("npm install", targetDir);
-
-		// Primero formateamos con Biome (el template puede tener archivos sin formatear)
 		await runCommand("npm run lint:fix", targetDir);
-
-		// Luego corremos los checks
 		await runCommand("npm run lint", targetDir);
 		await runCommand("npm run typecheck", targetDir);
 		await runCommand("npm run test:run", targetDir);
 		await runCommand("npm run build", targetDir);
 
-		// Si llegamos acá sin errores, el test pasa
 		expect(true).toBe(true);
-	}, 120_000); // timeout de 2 minutos
+	}, 120_000);
 });

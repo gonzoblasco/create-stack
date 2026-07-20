@@ -1,15 +1,15 @@
 {
-	"name": "create-stack-next",
-	"version": "0.7.2",
-	"description": "Scaffolder opinado para proyectos Next.js 15 con TypeScript estricto, Biome, Vitest, Playwright y AI agent config preinstalado.",
+	"name": "@gonzoblasco/create-stack",
+	"version": "0.8.0",
+	"description": "Scaffolder opinado multi-stack. Un solo comando y tenés un proyecto moderno, testeado, lintado y listo para que un AI agent lo habite.",
 	"type": "module",
 	"bin": {
-		"create-stack-next": "dist/index.js"
+		"create-stack": "dist/index.js",
+		"@gonzoblasco/create-stack": "dist/index.js"
 	},
 	"files": [
 		"dist",
-		"template",
-		"template-api"
+		"src/stacks"
 	],
 	"scripts": {
 		"build": "tsc",
@@ -26,15 +26,17 @@
 		"node": ">=20.0.0"
 	},
 	"keywords": [
-		"create-stack-next",
+		"create-stack",
 		"scaffolder",
 		"next.js",
 		"nextjs",
+		"tanstack",
 		"typescript",
 		"biome",
 		"vitest",
 		"playwright",
-		"ai-agent"
+		"ai-agent",
+		"openspec"
 	],
 	"license": "MIT",
 	"dependencies": {

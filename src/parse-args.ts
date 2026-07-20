@@ -1,11 +1,10 @@
-/**
- * Parser de argumentos minimalista. No usamos commander/yargs porque solo
- * necesitamos 3 flags. process.argv a mano es más simple y menos deps.
- */
+import { isValidStack, listStacks } from "./stacks/index.js";
 
 export type Args = {
-	/** Positional args: primer elemento es el nombre del proyecto */
-	_: string[];
+	/** Stack a usar (primer argumento posicional) */
+	stack?: string;
+	/** Nombre del proyecto (segundo argumento posicional, opcional) */
+	projectName?: string;
 	/** Inicializar git (default: true). false si se pasa --no-git */
 	git?: boolean;
 	/** Correr npm install (default: true). false si se pasa --no-install */
@@ -14,7 +13,7 @@ export type Args = {
 	pm?: string;
 	/** Inicializar OpenSpec (default: true). false si se pasa --no-openspec */
 	openspec?: boolean;
-	/** Template to use: app | api (default: app) */
+	/** Template legacy (deprecado, usar stack posicional) */
 	template?: string;
 };
 
@@ -32,12 +31,18 @@ function isValidTemplate(value: string): value is ValidTemplate {
 	return (VALID_TEMPLATES as readonly string[]).includes(value);
 }
 
+/** Mapeo de templates legacy a stacks */
+const TEMPLATE_TO_STACK: Record<string, string> = {
+	app: "next",
+	api: "api",
+};
+
 export function parseArgs(argv: string[]): Args {
-	const args: Args = { _: [] };
+	const args: Args = {};
+	const positional: string[] = [];
 
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
-
 		if (arg === undefined) continue;
 
 		switch (arg) {
@@ -74,19 +79,37 @@ export function parseArgs(argv: string[]): Args {
 						`--template inválido: "${next}". Valores válidos: ${VALID_TEMPLATES.join(", ")}`,
 					);
 				}
+				// Mapear template legacy a stack
 				args.template = next;
+				args.stack = TEMPLATE_TO_STACK[next];
 				i++;
 				break;
 			}
 			case "--help":
 			case "-h":
-				// El caller ya maneja esto antes
+				// El caller maneja esto
 				break;
 			default:
 				if (arg.startsWith("--")) {
 					throw new Error(`Flag desconocida: ${arg}`);
 				}
-				args._.push(arg);
+				positional.push(arg);
+		}
+	}
+
+	// El primer argumento posicional es el stack
+	// Solo si no fue ya seteado por --template legacy
+	if (positional.length > 0 && args.stack === undefined) {
+		const first = positional[0];
+		if (first && isValidStack(first)) {
+			args.stack = first;
+			// El segundo argumento posicional es el nombre del proyecto
+			args.projectName = positional[1];
+		} else {
+			// Compatibilidad hacia atrás: si el primer arg no es un stack válido,
+			// asumimos que es el nombre del proyecto con stack "next" (legacy)
+			args.stack = "next";
+			args.projectName = first;
 		}
 	}
 

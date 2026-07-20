@@ -1,13 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { execCapture, getGitConfig, isGitAvailable } from "../cli.js";
 
-// ═══════════════════════════════════════════════════════════
-// Tests de utilidades Git (funciones exportadas de cli.ts)
-// ═══════════════════════════════════════════════════════════
-
 describe("isGitAvailable", () => {
 	it("retorna true cuando git está instalado", async () => {
-		// En el entorno de desarrollo, git siempre debería estar disponible
 		const result = await isGitAvailable();
 		expect(result).toBe(true);
 	});
@@ -16,14 +11,13 @@ describe("isGitAvailable", () => {
 describe("getGitConfig", () => {
 	it("retorna null para una clave de git config inexistente", async () => {
 		const result = await getGitConfig(
-			"create-stack-next.nonexistent-key-test",
+			"create-stack.nonexistent-key-test",
 			process.cwd(),
 		);
 		expect(result).toBeNull();
 	});
 
 	it("retorna un valor string para claves configuradas (si existen)", async () => {
-		// Solo validamos que la función no crashea y retorna string o null
 		const userName = await getGitConfig("user.name", process.cwd());
 		expect(typeof userName === "string" || userName === null).toBe(true);
 	});

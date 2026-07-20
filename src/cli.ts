@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { accessSync, constants, existsSync, readdirSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as p from "@clack/prompts";
@@ -8,6 +8,7 @@ import pc from "picocolors";
 import { copyTemplate } from "./copy-template.js";
 import { runOpenSpecInit } from "./openspec-init.js";
 import { type Args, parseArgs } from "./parse-args.js";
+import { getStack, listStacks } from "./stacks/index.js";
 import { isInsideWorkspace } from "./workspace.js";
 
 /** Herramientas IA soportadas por OpenSpec para el select interactivo. */
@@ -31,18 +32,22 @@ const DEFAULT_TOOLS = ["claude", "cursor"];
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// En dist/ queda en dist/index.js, así que subimos un nivel
-function getTemplateDir(templateType = "app"): string {
-	const folderName = templateType === "api" ? "template-api" : "template";
-	return resolve(__dirname, "..", folderName);
-}
+const CLI_NAME = "@gonzoblasco/create-stack";
 
 function printUsage(): void {
+	const stacks = listStacks();
+	const stacksList = stacks
+		.map((s) => `  ${pc.green(s.id.padEnd(12))} ${s.label} — ${s.description}`)
+		.join("\n");
+
 	console.log(`
-${pc.cyan(pc.bold("create-stack-next"))} — scaffolder opinado para Next.js 15
+${pc.cyan(pc.bold(CLI_NAME))} — scaffolder opinado multi-stack
 
 ${pc.bold("Uso:")}
-  ${pc.cyan("npx create-stack-next")} ${pc.green("<nombre-del-proyecto>")} [opciones]
+  ${pc.cyan(`npx ${CLI_NAME}`)} ${pc.green("<stack>")} [nombre-del-proyecto] [opciones]
+
+${pc.bold("Stacks disponibles:")}
+${stacksList}
 
 ${pc.bold("Opciones:")}
   ${pc.yellow("--no-git")}          No inicializa git ni hace commit inicial
@@ -51,8 +56,9 @@ ${pc.bold("Opciones:")}
   ${pc.yellow("--pm <nombre>")}     Package manager: ${pc.cyan("npm")}, ${pc.cyan("pnpm")}, ${pc.cyan("yarn")}, ${pc.cyan("bun")} (default: ${pc.cyan("npm")})
 
 ${pc.bold("Ejemplos:")}
-  ${pc.cyan("npx create-stack-next")} ${pc.green("my-app")}
-  ${pc.cyan("npx create-stack-next")} ${pc.green("my-app")} ${pc.yellow("--pm pnpm --no-git")}
+  ${pc.cyan(`npx ${CLI_NAME}`)} ${pc.green("next")} ${pc.green("my-app")}
+  ${pc.cyan(`npx ${CLI_NAME}`)} ${pc.green("api")} ${pc.green("my-app")}
+  ${pc.cyan(`npx ${CLI_NAME}`)} ${pc.green("next")} ${pc.green("my-app")} ${pc.yellow("--pm pnpm --no-git")}
 `);
 }
 
@@ -74,7 +80,6 @@ export function validateProjectName(
 		return { ok: false, reason: "Falta el nombre del proyecto" };
 	}
 
-	// Mismas reglas que npm init: lowercase, puede tener guión/underscore, no arrancar con .
 	if (!/^[a-z0-9-_]+$/.test(name)) {
 		return {
 			ok: false,
@@ -89,11 +94,9 @@ export function validateProjectName(
 		};
 	}
 
-	// Si el directorio ya existe, verificar si está vacío
 	if (existsSync(name)) {
 		try {
 			const entries = readdirSync(name);
-			// Ignorar archivos del sistema como .DS_Store
 			const meaningfulEntries = entries.filter(
 				(entry) => entry !== ".DS_Store" && entry !== "Thumbs.db",
 			);
@@ -108,7 +111,6 @@ export function validateProjectName(
 		}
 	}
 
-	// Verificar permisos de escritura en el directorio padre
 	const parentDir = dirname(resolve(name));
 	try {
 		accessSync(parentDir, constants.W_OK);
@@ -119,13 +121,8 @@ export function validateProjectName(
 	return { ok: true };
 }
 
-function _logStep(emoji: string, message: string): void {
-	console.log(`  ${emoji}  ${message}`);
-}
-
 /**
- * Ejecuta un comando en un directorio. Hereda stdout/stderr del proceso padre
- * para que el output de npm/git sea visible.
+ * Ejecuta un comando en un directorio. Hereda stdout/stderr del proceso padre.
  */
 export function execInDir(
 	cmd: string,
@@ -144,7 +141,7 @@ export function execInDir(
 }
 
 /**
- * Ejecuta un comando y captura su stdout. Útil para leer valores de git config.
+ * Ejecuta un comando y captura su stdout.
  */
 export function execCapture(
 	cmd: string,
@@ -180,7 +177,6 @@ export async function isGitAvailable(): Promise<boolean> {
 
 /**
  * Lee un valor de la configuración global de git.
- * Retorna null si no está configurado o si git no está disponible.
  */
 export async function getGitConfig(
 	key: string,
@@ -195,7 +191,6 @@ export async function getGitConfig(
 }
 
 async function runGitInit(projectDir: string): Promise<void> {
-	// 1. Verificar que git está disponible
 	if (!(await isGitAvailable())) {
 		p.log.warn("Git no encontrado. Saltando inicialización git.");
 		p.log.info(`Instalá Git y corré ${pc.cyan("git init")} manualmente.`);
@@ -205,7 +200,6 @@ async function runGitInit(projectDir: string): Promise<void> {
 	await execInDir("git", ["init", "-b", "main"], projectDir);
 	await execInDir("git", ["add", "."], projectDir);
 
-	// 2. Verificar user.name/user.email
 	const userName = await getGitConfig("user.name", projectDir);
 	const userEmail = await getGitConfig("user.email", projectDir);
 
@@ -217,12 +211,12 @@ async function runGitInit(projectDir: string): Promise<void> {
 			"git",
 			[
 				"-c",
-				"user.name=create-stack-next",
+				"user.name=create-stack",
 				"-c",
-				"user.email=noreply@create-stack-next",
+				"user.email=noreply@create-stack",
 				"commit",
 				"-m",
-				"chore: initial commit from create-stack-next",
+				"chore: initial commit from @gonzoblasco/create-stack",
 			],
 			projectDir,
 		);
@@ -232,7 +226,7 @@ async function runGitInit(projectDir: string): Promise<void> {
 	} else {
 		await execInDir(
 			"git",
-			["commit", "-m", "chore: initial commit from create-stack-next"],
+			["commit", "-m", "chore: initial commit from @gonzoblasco/create-stack"],
 			projectDir,
 		);
 	}
@@ -244,7 +238,6 @@ async function runInstall(projectDir: string, pm: string): Promise<void> {
 }
 
 export async function run(): Promise<void> {
-	// Sin args o --help/-h → mostrar usage
 	if (
 		process.argv.length <= 2 ||
 		process.argv.includes("--help") ||
@@ -256,16 +249,38 @@ export async function run(): Promise<void> {
 
 	const args: Args = parseArgs(process.argv.slice(2));
 
-	const projectName = args._[0];
-	if (!projectName) {
-		console.error(pc.red("❌"), "Falta el nombre del proyecto.");
+	// Validar stack
+	const stack = args.stack;
+	if (!stack) {
+		console.error(pc.red("❌"), "Falta el stack.");
 		console.error(
-			`   Uso: ${pc.cyan("npx create-stack-next")} ${pc.green("<nombre>")}`,
+			`   Uso: ${pc.cyan(`npx ${CLI_NAME}`)} ${pc.green("<stack>")} ${pc.green("[nombre]")}`,
+		);
+		console.error(
+			`   Stacks: ${listStacks().map((s) => pc.cyan(s.id)).join(", ")}`,
 		);
 		process.exit(1);
 	}
 
-	// Validar nombre
+	const stackConfig = getStack(stack);
+	if (!stackConfig) {
+		console.error(
+			pc.red("❌"),
+			`Stack "${stack}" no encontrado. Stacks disponibles: ${listStacks().map((s) => pc.cyan(s.id)).join(", ")}`,
+		);
+		process.exit(1);
+	}
+
+	// Validar nombre del proyecto
+	const projectName = args.projectName;
+	if (!projectName) {
+		console.error(pc.red("❌"), "Falta el nombre del proyecto.");
+		console.error(
+			`   Uso: ${pc.cyan(`npx ${CLI_NAME}`)} ${pc.green(stack)} ${pc.green("<nombre>")}`,
+		);
+		process.exit(1);
+	}
+
 	const validation = validateProjectName(projectName);
 	if (!validation.ok) {
 		console.error(pc.red("❌"), validation.reason);
@@ -273,12 +288,12 @@ export async function run(): Promise<void> {
 	}
 
 	const projectDir = resolve(process.cwd(), projectName);
-	const pm = args.pm ?? "npm";
+	const pm = args.pm ?? stackConfig.defaultPM;
 	const git = args.git !== false;
 	const install = args.install !== false;
 	const openspec = args.openspec !== false;
 
-	p.intro(pc.bgCyan(pc.black(" create-stack-next ")));
+	p.intro(pc.bgCyan(pc.black(` ${CLI_NAME} — ${stackConfig.label} `)));
 
 	try {
 		const s = p.spinner();
@@ -288,16 +303,17 @@ export async function run(): Promise<void> {
 		await mkdir(projectDir, { recursive: true });
 		s.stop(`Directorio creado: ${pc.cyan(projectName)}`);
 
-		// 2. Copiar template
-		s.start("Copiando template");
-		const templateDir = getTemplateDir(args.template);
-		await copyTemplate(templateDir, projectDir, { projectName, pm });
+		// 2. Copiar template del stack
+		s.start(`Copiando template: ${stackConfig.label}`);
+		await copyTemplate(stackConfig.templateDir, projectDir, {
+			projectName,
+			pm,
+		});
 		s.stop("Template copiado exitosamente");
 
-		// 3. Personalizar package.json con el nombre correcto del proyecto
+		// 3. Personalizar package.json
 		s.start("Configurando proyecto");
 		const packageJsonPath = join(projectDir, "package.json");
-		const { readFile } = await import("node:fs/promises");
 		const packageJsonRaw = await readFile(packageJsonPath, "utf-8");
 		const packageJson = JSON.parse(packageJsonRaw);
 		packageJson.name = projectName;
@@ -308,10 +324,9 @@ export async function run(): Promise<void> {
 		);
 		s.stop("Configuración lista");
 
-		// 4. Seleccionar herramientas IA para OpenSpec (antes de install)
+		// 4. Seleccionar herramientas IA para OpenSpec
 		let selectedTools: string[] = DEFAULT_TOOLS;
 		if (openspec) {
-			// En entornos no interactivos (CI, pipes, etc.), saltar el select y usar defaults
 			if (!process.stdin.isTTY) {
 				p.log.info(
 					`Modo no interactivo detectado. Usando herramientas por defecto: ${DEFAULT_TOOLS.join(", ")}`,
@@ -353,9 +368,8 @@ export async function run(): Promise<void> {
 			}
 		}
 
-		// 6. OpenSpec init (Spec-Driven Development)
+		// 6. OpenSpec init
 		if (openspec && selectedTools.length > 0) {
-			// Si el usuario seleccionó "all", ignorar las demás y pasar solo "all"
 			const toolsFlag = selectedTools.includes("all") ? ["all"] : selectedTools;
 			s.start("Configurando OpenSpec (Spec-Driven Development)");
 			try {

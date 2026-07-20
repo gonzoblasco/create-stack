@@ -1,6 +1,6 @@
 {
 	"name": "@gonzoblasco/create-stack",
-	"version": "0.8.0",
+	"version": "0.8.1",
 	"description": "Scaffolder opinado multi-stack. Un solo comando y tenés un proyecto moderno, testeado, lintado y listo para que un AI agent lo habite.",
 	"type": "module",
 	"bin": {

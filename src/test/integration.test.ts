@@ -57,39 +57,35 @@ describe.each(PACKAGE_MANAGERS)("Integration: stack next with %s", (pm) => {
 		await rm(tempDir, { recursive: true, force: true });
 	});
 
-	it(
-		`generates a project with ${pm} that passes lint, typecheck, test and build`,
-		async () => {
-			const available = await isPMAvailable(pm);
-			if (!available) {
-				console.log(`  ⏭  ${pm} no disponible, saltando test`);
-				return;
-			}
+	it(`generates a project with ${pm} that passes lint, typecheck, test and build`, async () => {
+		const available = await isPMAvailable(pm);
+		if (!available) {
+			console.log(`  ⏭  ${pm} no disponible, saltando test`);
+			return;
+		}
 
-			const templateDir = join(
-				process.cwd(),
-				"src",
-				"stacks",
-				"next",
-				"template",
-			);
+		const templateDir = join(
+			process.cwd(),
+			"src",
+			"stacks",
+			"next",
+			"template",
+		);
 
-			await copyTemplate(templateDir, targetDir, {
-				projectName: "my-test-app",
-				pm,
-			});
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-app",
+			pm,
+		});
 
-			await runCommand(getInstallCmd(pm), targetDir);
-			await runCommand(`${pm} run lint:fix`, targetDir);
-			await runCommand(`${pm} run lint`, targetDir);
-			await runCommand(`${pm} run typecheck`, targetDir);
-			await runCommand(`${pm} run test:run`, targetDir);
-			await runCommand(`${pm} run build`, targetDir);
+		await runCommand(getInstallCmd(pm), targetDir);
+		await runCommand(`${pm} run lint:fix`, targetDir);
+		await runCommand(`${pm} run lint`, targetDir);
+		await runCommand(`${pm} run typecheck`, targetDir);
+		await runCommand(`${pm} run test:run`, targetDir);
+		await runCommand(`${pm} run build`, targetDir);
 
-			expect(true).toBe(true);
-		},
-		180_000,
-	);
+		expect(true).toBe(true);
+	}, 180_000);
 });
 
 describe.each(PACKAGE_MANAGERS)("Integration: stack api with %s", (pm) => {
@@ -105,37 +101,27 @@ describe.each(PACKAGE_MANAGERS)("Integration: stack api with %s", (pm) => {
 		await rm(tempDir, { recursive: true, force: true });
 	});
 
-	it(
-		`generates an API project with ${pm} that passes lint, typecheck, test and build`,
-		async () => {
-			const available = await isPMAvailable(pm);
-			if (!available) {
-				console.log(`  ⏭  ${pm} no disponible, saltando test`);
-				return;
-			}
+	it(`generates an API project with ${pm} that passes lint, typecheck, test and build`, async () => {
+		const available = await isPMAvailable(pm);
+		if (!available) {
+			console.log(`  ⏭  ${pm} no disponible, saltando test`);
+			return;
+		}
 
-			const templateDir = join(
-				process.cwd(),
-				"src",
-				"stacks",
-				"api",
-				"template",
-			);
+		const templateDir = join(process.cwd(), "src", "stacks", "api", "template");
 
-			await copyTemplate(templateDir, targetDir, {
-				projectName: "my-test-api",
-				pm,
-			});
+		await copyTemplate(templateDir, targetDir, {
+			projectName: "my-test-api",
+			pm,
+		});
 
-			await runCommand(getInstallCmd(pm), targetDir);
-			await runCommand(`${pm} run lint:fix`, targetDir);
-			await runCommand(`${pm} run lint`, targetDir);
-			await runCommand(`${pm} run typecheck`, targetDir);
-			await runCommand(`${pm} run test:run`, targetDir);
-			await runCommand(`${pm} run build`, targetDir);
+		await runCommand(getInstallCmd(pm), targetDir);
+		await runCommand(`${pm} run lint:fix`, targetDir);
+		await runCommand(`${pm} run lint`, targetDir);
+		await runCommand(`${pm} run typecheck`, targetDir);
+		await runCommand(`${pm} run test:run`, targetDir);
+		await runCommand(`${pm} run build`, targetDir);
 
-			expect(true).toBe(true);
-		},
-		180_000,
-	);
+		expect(true).toBe(true);
+	}, 180_000);
 });
